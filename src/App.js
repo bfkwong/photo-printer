@@ -14,19 +14,20 @@ const UnknownPage = () => (
 );
 
 function App() {
-  const [userType, setUserType] = useState();
-  const navigate = useNavigate();
+  // const [userType, setUserType] = useState();
+  // const navigate = useNavigate();
 
-  useEffect(() => {
-    (async () => {
-      const userTypeResp = await getUserType();
-      setUserType(userTypeResp);
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     const userTypeResp = await getUserType();
+  //     setUserType(userTypeResp);
+  //   })();
+  // }, []);
 
-  useEffect(() => {
-    navigate(`/${userType}`);
-  }, [userType, navigate]);
+  // useEffect(() => {
+  //   navigate(`/${userType}`);
+  //   document.title = userType;
+  // }, [userType, navigate]);
 
   return (
     <Routes>

@@ -3,9 +3,9 @@ import { Navbar, Container, Nav, NavDropdown } from "react-bootstrap";
 
 export default function NavigationBar(props) {
   return (
-    <Navbar bg="light" expand="lg">
+    <Navbar bg="dark" variant="dark" expand="sm" collapseOnSelect>
       <Container>
-        <Navbar.Brand onClick={props.titleAction}>{props.title}</Navbar.Brand>
+        <Navbar.Brand onClick={props.titleAction}>🏙 {props.title}</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">

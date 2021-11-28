@@ -1,6 +1,9 @@
 import React from "react";
+import { useNavigate, Routes, Route } from "react-router-dom";
+import { Container } from "react-bootstrap";
+
 import NavigationBar from "../Common/NavigationBar";
-import { useNavigate } from "react-router-dom";
+import OrderList from "../Common/OrderList";
 
 export default function Customer(props) {
   const navigate = useNavigate();
@@ -11,9 +14,15 @@ export default function Customer(props) {
         title="Customer"
         titleAction={() => navigate("/customer")}
         config={[
-          { type: "normal", text: "Orders" },
+          { type: "normal", text: "Orders", action: () => navigate("/customer/orders") },
           { type: "normal", text: "Gallery" }
-        ]}></NavigationBar>
+        ]}
+      />
+      <Container fluid="sm" style={{ marginTop: 10 }}>
+        <Routes>
+          <Route path="/orders" element={<OrderList />}></Route>
+        </Routes>
+      </Container>
     </div>
   );
 }
