@@ -50,9 +50,9 @@ export default function Admin(props) {
       />
       <Container fluid="sm" style={{ marginTop: 10 }}>
         <Routes>
-          <Route path="/orders" element={<OrderList />} />
-          <Route path="/customers" element={<CustomerList />} />
-          <Route path="/printers" element={<PrinterList />} />
+          <Route path="orders" element={<OrderList />} />
+          <Route path="customers" element={<CustomerList />} />
+          <Route path="printers" element={<PrinterList />} />
           <Route path="*" element={<AdminHome />} />
         </Routes>
       </Container>

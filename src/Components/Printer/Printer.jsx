@@ -48,8 +48,8 @@ export default function Printer(props) {
       />
       <Container fluid="sm" style={{ marginTop: 10 }}>
         <Routes>
-          <Route path="/orders" element={<OrderList />}></Route>
-          <Route path="/customers" element={<CustomerList />}></Route>
+          <Route path="orders" element={<OrderList />}></Route>
+          <Route path="customers" element={<CustomerList />}></Route>
           <Route path="*" element={<PrinterHome />}></Route>
         </Routes>
       </Container>

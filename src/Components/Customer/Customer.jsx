@@ -20,7 +20,7 @@ export default function Customer(props) {
       />
       <Container fluid="sm" style={{ marginTop: 10 }}>
         <Routes>
-          <Route path="/orders" element={<OrderList />}></Route>
+          <Route path="orders" element={<OrderList />}></Route>
         </Routes>
       </Container>
     </div>
