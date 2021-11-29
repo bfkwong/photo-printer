@@ -1,5 +1,10 @@
 import React from "react";
 import { Badge, Table } from "react-bootstrap";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router";
+import { Plus } from "react-bootstrap-icons";
+
+import { getUserType } from "../../redux";
 
 const NewOrder = () => (
   <Badge pill bg="primary">
@@ -25,7 +30,48 @@ const Resolved = () => (
   </Badge>
 );
 
+const samplePayload = [
+  {
+    id: "1",
+    title: "Trip to Rome",
+    customer: "Mark",
+    printer: "Otto",
+    status: "new_order"
+  },
+  {
+    id: "2",
+    title: "Company retreat to Big Sur",
+    customer: "Jacob",
+    printer: "Thornton",
+    status: "issue"
+  },
+  {
+    id: "3",
+    title: "Cal Poly orientation",
+    customer: "Jeffrey",
+    printer: "Armstrong",
+    status: "shipped"
+  },
+  {
+    id: "4",
+    title: "Big Boba Convention",
+    customer: "Edward",
+    printer: "James",
+    status: "shipped"
+  },
+  {
+    id: "5",
+    title: "JavaScript Convention",
+    customer: "Cody",
+    printer: "Turnwood",
+    status: "resolved"
+  }
+];
+
 export default function OrderList(props) {
+  const userType = useSelector(getUserType);
+  const navigate = useNavigate();
+
   return (
     <>
       <h3>🎞 You've got 3 active orders</h3>
@@ -40,49 +86,28 @@ export default function OrderList(props) {
           </tr>
         </thead>
         <tbody>
+          {samplePayload.map((order) => (
+            <tr onClick={() => navigate(`/${userType}/orders/${order.id}`)}>
+              <td>{order.id}</td>
+              <td>{order.title}</td>
+              <td>{order.customer}</td>
+              <td>{order.printer}</td>
+              <td>
+                {order.status === "new_order" && <NewOrder />}
+                {order.status === "issue" && <Issues />}
+                {order.status === "shipped" && <Shipped />}
+                {order.status === "resolved" && <Resolved />}
+              </td>
+            </tr>
+          ))}
           <tr>
-            <td>1</td>
-            <td>Trip to Rome</td>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>
-              <NewOrder />
-            </td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>Company retreat to Big Sur</td>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>
-              <Issues />
-            </td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td>Cal Poly orientation day</td>
-            <td>Jeffrey</td>
-            <td>Armstrong</td>
-            <td>
-              <Shipped />
-            </td>
-          </tr>
-          <tr>
-            <td>4</td>
-            <td>Big Boba Convention</td>
-            <td>Edward</td>
-            <td>James</td>
-            <td>
-              <Shipped />
-            </td>
-          </tr>
-          <tr>
-            <td>5</td>
-            <td>JavaScript FHSC Conference</td>
-            <td>Cody</td>
-            <td>Turnwood</td>
-            <td>
-              <Resolved />
+            <td colSpan="5" style={{ textAlign: "center" }} onClick={() => navigate(`/${userType}/orders/new`)}>
+              <b>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Plus size={30} />
+                  <div>Create a new order</div>
+                </div>
+              </b>
             </td>
           </tr>
         </tbody>
