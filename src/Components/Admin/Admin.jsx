@@ -1,10 +1,14 @@
 import React from "react";
-import NavigationBar from "../Common/NavigationBar";
-import { useNavigate, Routes, Route } from "react-router-dom";
+import { useNavigate, Routes, Route, Navigate } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
+import { useSelector } from "react-redux";
+
+import NavigationBar from "../Common/NavigationBar";
 import OrderList from "../Common/OrderList";
 import CustomerList from "../Common/CustomerList";
 import PrinterList from "../Common/PrinterList";
+import { getUserType } from "../../redux";
+import { userTypes } from "../../constants";
 
 function AdminHome() {
   return (
@@ -36,6 +40,14 @@ function AdminHome() {
 
 export default function Admin(props) {
   const navigate = useNavigate();
+  const userType = useSelector(getUserType);
+
+  if (userType === userTypes.ADMIN) {
+    return <Navigate to="/admin" />;
+  }
+  if (userType === userTypes.PRINTER) {
+    return <Navigate to="/printer" />;
+  }
 
   return (
     <div>

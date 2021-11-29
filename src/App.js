@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
-import { getUserType } from "./Service/queries";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { Routes, Route } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { SET_USER_TYPE } from "./redux";
 
 import Printer from "./Components/Printer/Printer";
 import Admin from "./Components/Admin/Admin";
 import Customer from "./Components/Customer/Customer";
+import { userTypes } from "./constants";
 
 const UnknownPage = () => (
   <div>
@@ -14,20 +16,11 @@ const UnknownPage = () => (
 );
 
 function App() {
-  // const [userType, setUserType] = useState();
-  // const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   (async () => {
-  //     const userTypeResp = await getUserType();
-  //     setUserType(userTypeResp);
-  //   })();
-  // }, []);
-
-  // useEffect(() => {
-  //   navigate(`/${userType}`);
-  //   document.title = userType;
-  // }, [userType, navigate]);
+  useEffect(() => {
+    dispatch({ type: SET_USER_TYPE, payload: userTypes.PRINTER });
+  }, [dispatch]);
 
   return (
     <Routes>

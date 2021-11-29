@@ -1,9 +1,13 @@
 import React from "react";
+import { Container, Col, Row } from "react-bootstrap";
+import { useNavigate, Routes, Route, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+
 import NavigationBar from "../Common/NavigationBar";
-import { useNavigate, Routes, Route } from "react-router-dom";
 import OrderList from "../Common/OrderList";
 import CustomerList from "../Common/CustomerList";
-import { Container, Col, Row } from "react-bootstrap";
+import { getUserType } from "../../redux";
+import { userTypes } from "../../constants";
 
 function PrinterHome() {
   return (
@@ -35,6 +39,14 @@ function PrinterHome() {
 
 export default function Printer(props) {
   const navigate = useNavigate();
+  const userType = useSelector(getUserType);
+
+  if (userType === userTypes.ADMIN) {
+    return <Navigate to="/admin" />;
+  }
+  if (userType === userTypes.CUSTOMER) {
+    return <Navigate to="/customer" />;
+  }
 
   return (
     <div>

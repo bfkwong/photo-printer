@@ -1,6 +1,6 @@
 import { createStore } from "redux";
 
-const SET_USER_TYPE = "SET_USER_TYPE";
+export const SET_USER_TYPE = "SET_USER_TYPE";
 
 const initialState = {};
 
