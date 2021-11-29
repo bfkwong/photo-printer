@@ -1,24 +1,8 @@
 import React from "react";
-import { Badge, Table } from "react-bootstrap";
+import { Table } from "react-bootstrap";
 import { Plus } from "react-bootstrap-icons";
 
-const GoodStanding = () => (
-  <Badge pill bg="primary">
-    Good standing 👩‍💼
-  </Badge>
-);
-
-const Probation = () => (
-  <Badge pill bg="warning">
-    Probation 🤷‍♂️
-  </Badge>
-);
-
-const Banned = () => (
-  <Badge pill bg="danger">
-    Banned 🙅‍♂️
-  </Badge>
-);
+import { GoodStanding, Probation, Banned } from "./Badges";
 
 export default function PrinterList(props) {
   return (

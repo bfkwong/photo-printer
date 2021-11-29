@@ -1,34 +1,11 @@
 import React from "react";
-import { Badge, Table } from "react-bootstrap";
+import { Table } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { Plus } from "react-bootstrap-icons";
 
 import { getUserType } from "../../redux";
-
-const NewOrder = () => (
-  <Badge pill bg="primary">
-    New Order 📥
-  </Badge>
-);
-
-const Issues = () => (
-  <Badge pill bg="danger">
-    Issue 🚨
-  </Badge>
-);
-
-const Shipped = () => (
-  <Badge pill bg="info">
-    Shipped 🚀
-  </Badge>
-);
-
-const Resolved = () => (
-  <Badge pill bg="success">
-    Resolved 🎉
-  </Badge>
-);
+import { NewOrder, Issues, Shipped, Resolved } from "./Badges";
 
 const samplePayload = [
   {
