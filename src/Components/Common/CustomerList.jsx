@@ -1,10 +1,16 @@
 import React from "react";
 import { Table } from "react-bootstrap";
 import { Plus } from "react-bootstrap-icons";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 
+import { getUserType } from "../../redux";
 import { GoodStanding, Probation, Banned } from "./Badges";
 
-export default function CustomerList(props) {
+export default function CustomerList() {
+  const userType = useSelector(getUserType);
+  const navigate = useNavigate();
+
   return (
     <>
       <h3>🙋‍♀️ Wow, that's a lot of customers!</h3>
@@ -65,11 +71,11 @@ export default function CustomerList(props) {
             </td>
           </tr>
           <tr>
-            <td colSpan="5" style={{ textAlign: "center" }}>
+            <td colSpan="5" style={{ textAlign: "center" }} onClick={() => navigate(`/${userType}/customers/new`)}>
               <b>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <Plus size={30} />
-                  <div>Invite a customer</div>
+                  <div>Invite a new customer</div>
                 </div>
               </b>
             </td>

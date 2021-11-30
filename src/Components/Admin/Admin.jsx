@@ -5,10 +5,14 @@ import { useSelector } from "react-redux";
 
 import NavigationBar from "../Common/NavigationBar";
 import OrderList from "../Common/OrderList";
+import Order from "../Common/Order";
+import OrderNew from "../Common/OrderNew";
 import CustomerList from "../Common/CustomerList";
 import PrinterList from "../Common/PrinterList";
 import { getUserType } from "../../redux";
 import { userTypes } from "../../constants";
+import CustomerNew from "../Common/CustomerNew";
+import PrinterNew from "../Common/PrinterNew";
 
 function AdminHome() {
   return (
@@ -42,8 +46,8 @@ export default function Admin(props) {
   const navigate = useNavigate();
   const userType = useSelector(getUserType);
 
-  if (userType === userTypes.ADMIN) {
-    return <Navigate to="/admin" />;
+  if (userType === userTypes.CUSTOMER) {
+    return <Navigate to="/customer" />;
   }
   if (userType === userTypes.PRINTER) {
     return <Navigate to="/printer" />;
@@ -62,9 +66,21 @@ export default function Admin(props) {
       />
       <Container fluid="sm" style={{ marginTop: 10 }}>
         <Routes>
-          <Route path="orders" element={<OrderList />} />
-          <Route path="customers" element={<CustomerList />} />
-          <Route path="printers" element={<PrinterList />} />
+          <Route path="orders">
+            <Route index element={<OrderList />} />
+            <Route path=":orderId" element={<Order />} />
+            <Route path="new" element={<OrderNew />} />
+          </Route>
+          <Route path="customers">
+            <Route index element={<CustomerList />} />
+            <Route path=":customerId" element={<h1>Customer</h1>} />
+            <Route path="new" element={<CustomerNew />} />
+          </Route>
+          <Route path="printers">
+            <Route index element={<PrinterList />} />
+            <Route path=":printerId" element={<h1>Printer</h1>} />
+            <Route path="new" element={<PrinterNew />} />
+          </Route>
           <Route path="*" element={<AdminHome />} />
         </Routes>
       </Container>

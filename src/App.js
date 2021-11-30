@@ -8,6 +8,8 @@ import Admin from "./Components/Admin/Admin";
 import Customer from "./Components/Customer/Customer";
 import { userTypes } from "./constants";
 
+import "./Components/Common/Common.css";
+
 const UnknownPage = () => (
   <div>
     <h1>{"Oops, this ain't it :("}</h1>

@@ -10,6 +10,7 @@ import { getUserType } from "../../redux";
 import { userTypes } from "../../constants";
 import Order from "../Common/Order";
 import OrderNew from "../Common/OrderNew";
+import CustomerNew from "../Common/CustomerNew";
 
 function PrinterHome() {
   return (
@@ -70,6 +71,7 @@ export default function Printer(props) {
           <Route path="customers">
             <Route index element={<CustomerList />} />
             <Route path=":customerId" element={<h1>Customer</h1>} />
+            <Route path="new" element={<CustomerNew />} />
           </Route>
           <Route path="*" element={<PrinterHome />}></Route>
         </Routes>

@@ -1,10 +1,16 @@
 import React from "react";
 import { Table } from "react-bootstrap";
 import { Plus } from "react-bootstrap-icons";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 
+import { getUserType } from "../../redux";
 import { GoodStanding, Probation, Banned } from "./Badges";
 
 export default function PrinterList(props) {
+  const userType = useSelector(getUserType);
+  const navigate = useNavigate();
+
   return (
     <>
       <h3>👯‍♀️ Team work makes the dream work!</h3>
@@ -65,11 +71,11 @@ export default function PrinterList(props) {
             </td>
           </tr>
           <tr>
-            <td colSpan="5" style={{ textAlign: "center" }}>
+            <td colSpan="5" style={{ textAlign: "center" }} onClick={() => navigate(`/${userType}/printer/new`)}>
               <b>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <Plus size={30} />
-                  <div>Invite a Printer</div>
+                  <div>Invite a new printer</div>
                 </div>
               </b>
             </td>
