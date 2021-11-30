@@ -7,6 +7,8 @@ import NavigationBar from "../Common/NavigationBar";
 import OrderList from "../Common/OrderList";
 import { getUserType } from "../../redux";
 import { userTypes } from "../../constants";
+import Order from "../Common/Order";
+import OrderNew from "../Common/OrderNew";
 
 export default function Customer(props) {
   const navigate = useNavigate();
@@ -31,7 +33,11 @@ export default function Customer(props) {
       />
       <Container fluid="sm" style={{ marginTop: 10 }}>
         <Routes>
-          <Route path="orders" element={<OrderList />}></Route>
+          <Route path="orders">
+            <Route index element={<OrderList />} />
+            <Route path=":orderId" element={<Order />} />
+            <Route path="new" element={<OrderNew />} />
+          </Route>
         </Routes>
       </Container>
     </div>
