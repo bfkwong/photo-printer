@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-photoprinter-dev-201526-authRole",
+      "UnauthRoleArn": "arn:aws:iam::647428419491:role/amplify-photoprinter-dev-201526-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::647428419491:role/amplify-photoprinter-dev-201526-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-photoprinter-dev-201526-deployment",
+      "UnauthRoleName": "amplify-photoprinter-dev-201526-unauthRole",
+      "StackName": "amplify-photoprinter-dev-201526",
+      "StackId": "arn:aws:cloudformation:us-west-2:647428419491:stack/amplify-photoprinter-dev-201526/51c95d30-525d-11ec-bf88-02268e8a52f9",
+      "AmplifyAppId": "d1dvyc0ntatq8t"
+    },
+    "categories": {
+      "auth": {
+        "photoprinterc100a81c": {}
+      }
+    }
+  }
+}

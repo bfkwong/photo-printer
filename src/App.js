@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { SET_USER_TYPE } from "./redux";
+import { withAuthenticator } from "@aws-amplify/ui-react";
 
+import { SET_USER_TYPE } from "./redux";
 import Printer from "./Components/Printer/Printer";
 import Admin from "./Components/Admin/Admin";
 import Customer from "./Components/Customer/Customer";
@@ -34,4 +35,4 @@ function App() {
   );
 }
 
-export default App;
+export default withAuthenticator(App);
