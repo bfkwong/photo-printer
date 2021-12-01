@@ -1,7 +1,10 @@
 import React from "react";
 import { Accordion, Container, Row, Col, Form, Button, Image } from "react-bootstrap";
 import { BagXFill, CheckCircleFill, XCircleFill } from "react-bootstrap-icons";
+import { useSelector } from "react-redux";
 import { stateAbbrev } from "../../constants";
+import { getCogUsername } from "../../redux";
+import { postNewOrder } from "../../Service/queries";
 
 export function UploadedImage(props) {
   return (
@@ -13,6 +16,7 @@ export function UploadedImage(props) {
 }
 
 export default function OrderNew() {
+  const cogUsername = useSelector(getCogUsername);
   const [fields, dispatch] = React.useReducer((state, action) => {
     switch (action.type) {
       case "change_field":
@@ -105,7 +109,7 @@ export default function OrderNew() {
               </Accordion.Header>
               <Accordion.Body>
                 <Row>
-                  <Col xs={12}>
+                  <Col xs={12} sm={6}>
                     <Form.Group className="mb-3">
                       <Form.Label>Order name</Form.Label>
                       <Form.Control
@@ -113,6 +117,10 @@ export default function OrderNew() {
                         onChange={(e) => fieldDispatch("orderName", e.target.value)}
                       />
                     </Form.Group>
+                  </Col>
+                  <Col xs={12} sm={6}>
+                    <Form.Label>Phone number</Form.Label>
+                    <Form.Control value={fields.phone} onChange={(e) => fieldDispatch("phone", e.target.value)} />
                   </Col>
                   <Col xs={12}>
                     <Form.Group className="mb-3">
@@ -323,7 +331,27 @@ export default function OrderNew() {
           <div style={{ display: "flex", justifyContent: "center", marginTop: 10, marginBottom: 80 }}>
             <Button
               disabled={!fields.tc || !orderSectionVld || !photoSectionVld || !paymentSectionVld}
-              onClick={() => setOrderStatus("success")}>
+              onClick={async () => {
+                const resp = await postNewOrder({
+                  newOrder: {
+                    userId: cogUsername,
+                    storeId: "0000",
+                    address: `${fields.addr_line1}, ${fields.addr_line2}`,
+                    orderdate: new Date().toISOString(),
+                    city: `${fields.addr_city}`,
+                    zipcode: parseInt(fields.addr_postal),
+                    phone: parseInt(fields.phone),
+                    province: fields.addr_state,
+                    imageurl: ["s3.com/user/order1/asf", "s3.com/user/order1/egf", "s3.com/user/order1/fga"],
+                    trackingurl: "shippo.com/quihf21fho11if1oi/order1"
+                  }
+                });
+                if (resp === "ERROR") {
+                  setOrderStatus("error");
+                } else {
+                  setOrderStatus("success");
+                }
+              }}>
               Place the order!
             </Button>
           </div>

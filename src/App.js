@@ -2,14 +2,16 @@ import { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { withAuthenticator } from "@aws-amplify/ui-react";
+import Auth from "@aws-amplify/auth";
 
-import { SET_USER_TYPE } from "./redux";
+import { SET_ALL_ORDERS, SET_COG_USERID, SET_USER_TYPE } from "./redux";
 import Printer from "./Components/Printer/Printer";
 import Admin from "./Components/Admin/Admin";
 import Customer from "./Components/Customer/Customer";
 import { userTypes } from "./constants";
 
 import "./Components/Common/Common.css";
+import { getAllOrders } from "./Service/queries";
 
 const UnknownPage = () => (
   <div>
@@ -23,6 +25,16 @@ function App() {
 
   useEffect(() => {
     dispatch({ type: SET_USER_TYPE, payload: userTypes.PRINTER });
+
+    (async () => {
+      const cogUserId = await Auth.currentSession();
+      dispatch({ type: SET_COG_USERID, payload: cogUserId?.idToken?.payload["cognito:username"] });
+    })();
+
+    (async () => {
+      const allOrdersResp = await getAllOrders();
+      dispatch({ type: SET_ALL_ORDERS, payload: allOrdersResp });
+    })();
   }, [dispatch]);
 
   return (

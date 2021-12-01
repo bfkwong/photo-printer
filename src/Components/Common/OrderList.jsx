@@ -63,7 +63,7 @@ export default function OrderList(props) {
           </tr>
         </thead>
         <tbody>
-          {samplePayload.map((order) => (
+          {(props.orders ?? samplePayload).map((order) => (
             <tr onClick={() => navigate(`/${userType}/orders/${order.id}`)}>
               <td>{order.id}</td>
               <td>{order.title}</td>

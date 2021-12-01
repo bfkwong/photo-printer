@@ -1,5 +1,6 @@
 import React from "react";
 import { Navbar, Container, Nav, NavDropdown } from "react-bootstrap";
+import { Auth } from "aws-amplify";
 
 export default function NavigationBar(props) {
   return (
@@ -23,6 +24,21 @@ export default function NavigationBar(props) {
                   );
                 }
               })}
+          </Nav>
+        </Navbar.Collapse>
+        <Navbar.Collapse className="justify-content-end">
+          <Nav>
+            <Nav.Link
+              onClick={async () => {
+                try {
+                  await Auth.signOut();
+                  window.location.reload();
+                } catch (error) {
+                  console.log("error signing out: ", error);
+                }
+              }}>
+              Sign out
+            </Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>
