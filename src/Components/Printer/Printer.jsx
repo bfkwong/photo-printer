@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import NavigationBar from "../Common/NavigationBar";
 import OrderList from "../Common/OrderList";
 import CustomerList from "../Common/CustomerList";
-import { getUserType } from "../../redux";
+import { getAllOrders, getUserType } from "../../redux";
 import { userTypes } from "../../constants";
 import Order from "../Common/Order";
 import OrderNew from "../Common/OrderNew";
@@ -43,6 +43,7 @@ function PrinterHome() {
 export default function Printer(props) {
   const navigate = useNavigate();
   const userType = useSelector(getUserType);
+  const orders = useSelector(getAllOrders);
 
   if (userType === userTypes.ADMIN) {
     return <Navigate to="/admin" />;
@@ -64,7 +65,7 @@ export default function Printer(props) {
       <Container fluid="sm" style={{ marginTop: 10 }}>
         <Routes>
           <Route path="orders">
-            <Route index element={<OrderList />} />
+            <Route index element={<OrderList orders={orders} />} />
             <Route path=":orderId" element={<Order />} />
             <Route path="new" element={<OrderNew />} />
           </Route>

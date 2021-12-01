@@ -334,13 +334,16 @@ export default function OrderNew() {
               onClick={async () => {
                 const resp = await postNewOrder({
                   newOrder: {
+                    orderTitle: fields.orderName,
+                    orderDescription: fields.description,
+                    orderPaid: true,
                     userId: cogUsername,
                     storeId: "0000",
                     address: `${fields.addr_line1}, ${fields.addr_line2}`,
                     orderdate: new Date().toISOString(),
                     city: `${fields.addr_city}`,
-                    zipcode: parseInt(fields.addr_postal),
-                    phone: parseInt(fields.phone),
+                    zipcode: fields.addr_postal,
+                    phone: fields.phone,
                     province: fields.addr_state,
                     imageurl: ["s3.com/user/order1/asf", "s3.com/user/order1/egf", "s3.com/user/order1/fga"],
                     trackingurl: "shippo.com/quihf21fho11if1oi/order1"

@@ -55,7 +55,6 @@ export default function OrderList(props) {
       <Table hover style={{ marginTop: 20 }}>
         <thead>
           <tr>
-            <th>#</th>
             <th>Title</th>
             <th>Customer</th>
             <th>Printer</th>
@@ -64,13 +63,12 @@ export default function OrderList(props) {
         </thead>
         <tbody>
           {(props.orders ?? samplePayload).map((order) => (
-            <tr onClick={() => navigate(`/${userType}/orders/${order.id}`)}>
-              <td>{order.id}</td>
-              <td>{order.title}</td>
-              <td>{order.customer}</td>
-              <td>{order.printer}</td>
+            <tr onClick={() => navigate(`/${userType}/orders/${order.orderId}`)}>
+              <td>{order.orderTitle}</td>
+              <td>{order.userId}</td>
+              <td>{order.assigned}</td>
               <td>
-                {order.status === "new_order" && <NewOrder />}
+                {!order.status && <NewOrder />}
                 {order.status === "issue" && <Issues />}
                 {order.status === "shipped" && <Shipped />}
                 {order.status === "resolved" && <Resolved />}
