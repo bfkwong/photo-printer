@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { Plus } from "react-bootstrap-icons";
 
-import { getUserType } from "../../redux";
+import { getAllOrders, getUserType } from "../../redux";
 import { NewOrder, Issues, Shipped, Resolved } from "./Badges";
 
 const samplePayload = [
@@ -47,11 +47,12 @@ const samplePayload = [
 
 export default function OrderList(props) {
   const userType = useSelector(getUserType);
+  const orders = useSelector(getAllOrders);
   const navigate = useNavigate();
 
   return (
     <>
-      <h3>🎞 You've got 3 active orders</h3>
+      <h3>🎞 You've got {orders?.length ?? 0} active orders</h3>
       <Table hover style={{ marginTop: 20 }}>
         <thead>
           <tr>
@@ -62,19 +63,20 @@ export default function OrderList(props) {
           </tr>
         </thead>
         <tbody>
-          {(props.orders ?? samplePayload).map((order) => (
-            <tr onClick={() => navigate(`/${userType}/orders/${order.orderId}`)}>
-              <td>{order.orderTitle}</td>
-              <td>{order.userId}</td>
-              <td>{order.assigned}</td>
-              <td>
-                {!order.status && <NewOrder />}
-                {order.status === "issue" && <Issues />}
-                {order.status === "shipped" && <Shipped />}
-                {order.status === "resolved" && <Resolved />}
-              </td>
-            </tr>
-          ))}
+          {orders?.map &&
+            orders.map((order) => (
+              <tr onClick={() => navigate(`/${userType}/orders/${order.orderId}`)}>
+                <td>{order.orderTitle}</td>
+                <td>{order.userId}</td>
+                <td>{order.assigned}</td>
+                <td>
+                  {!order.status && <NewOrder />}
+                  {order.status === "issue" && <Issues />}
+                  {order.status === "shipped" && <Shipped />}
+                  {order.status === "resolved" && <Resolved />}
+                </td>
+              </tr>
+            ))}
           <tr>
             <td colSpan="5" style={{ textAlign: "center" }} onClick={() => navigate(`/${userType}/orders/new`)}>
               <b>

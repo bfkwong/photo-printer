@@ -3,8 +3,12 @@ import { createStore } from "redux";
 export const SET_USER_TYPE = "SET_USER_TYPE";
 export const SET_COG_USERID = "SET_COG_USERID";
 export const SET_ALL_ORDERS = "SET_ALL_ORDERS";
+export const SET_COMPLETED_FTU = "SET_COMPLETED_FTU";
+export const SET_USER_INFO = "SET_USER_INFO";
 
-const initialState = {};
+const initialState = {
+  userType: null
+};
 
 function reducer(state, action) {
   switch (action.type) {
@@ -23,6 +27,16 @@ function reducer(state, action) {
         ...state,
         allOrders: action.payload
       };
+    case SET_COMPLETED_FTU:
+      return {
+        ...state,
+        completedFTU: action.payload
+      };
+    case SET_USER_INFO:
+      return {
+        ...state,
+        userInfo: action.payload
+      };
     default:
       return { ...state };
   }
@@ -31,5 +45,7 @@ function reducer(state, action) {
 export const getUserType = (state) => state.userType;
 export const getCogUsername = (state) => state.cogUsername;
 export const getAllOrders = (state) => state.allOrders;
+export const getCompletedFTU = (state) => state.completedFTU;
+export const getUserInfo = (state) => state.userInfo;
 
 export default createStore(reducer, initialState, window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__());

@@ -3,7 +3,7 @@ import { Accordion, Container, Row, Col, Form, Button, Image } from "react-boots
 import { BagXFill, CheckCircleFill, XCircleFill } from "react-bootstrap-icons";
 import { useSelector } from "react-redux";
 import { stateAbbrev } from "../../constants";
-import { getCogUsername } from "../../redux";
+import { getCogUsername, getUserInfo } from "../../redux";
 import { postNewOrder } from "../../Service/queries";
 
 export function UploadedImage(props) {
@@ -17,21 +17,32 @@ export function UploadedImage(props) {
 
 export default function OrderNew() {
   const cogUsername = useSelector(getCogUsername);
-  const [fields, dispatch] = React.useReducer((state, action) => {
-    switch (action.type) {
-      case "change_field":
-        return { ...state, [action.fieldId]: action.fieldValue };
-      case "add_images":
-        return { ...state, images: [...(state.images ?? []), ...action.newImages] };
-      case "remove_image":
-        return {
-          ...state,
-          images: [...state.images.filter((object, idx) => idx !== action.removeIdx ?? false)]
-        };
-      default:
-        return state;
+  const userInfo = useSelector(getUserInfo);
+  const [fields, dispatch] = React.useReducer(
+    (state, action) => {
+      switch (action.type) {
+        case "change_field":
+          return { ...state, [action.fieldId]: action.fieldValue };
+        case "add_images":
+          return { ...state, images: [...(state.images ?? []), ...action.newImages] };
+        case "remove_image":
+          return {
+            ...state,
+            images: [...state.images.filter((object, idx) => idx !== action.removeIdx ?? false)]
+          };
+        default:
+          return state;
+      }
+    },
+    {
+      phone: userInfo?.Phone,
+      addr_line1: userInfo?.Street,
+      addr_city: userInfo?.City,
+      addr_state: userInfo?.State,
+      addr_postal: userInfo?.Zipcode,
+      billing_name: `${userInfo?.FirstName}${" " + userInfo?.LastName}`
     }
-  }, {});
+  );
   const [activeKey, setActiveKey] = React.useState("0");
   const [orderStatus, setOrderStatus] = React.useState();
 
@@ -39,7 +50,6 @@ export default function OrderNew() {
     fields.orderName &&
     fields.description &&
     fields.addr_line1 &&
-    fields.addr_line2 &&
     fields.addr_city &&
     fields.addr_state &&
     fields.addr_postal;
@@ -94,7 +104,7 @@ export default function OrderNew() {
           <h3 style={{ marginBottom: 30 }}>Create a new photo order 📝</h3>
           <Accordion activeKey={activeKey}>
             <Accordion.Item eventKey="0">
-              <Accordion.Header onClick={() => setActiveKey("0")}>
+              <Accordion.Header onClick={() => setActiveKey((ak) => (ak === "0" ? "-1" : "0"))}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
                   <div>
                     <h5>Tell us about your order</h5>
@@ -193,7 +203,7 @@ export default function OrderNew() {
               </Accordion.Body>
             </Accordion.Item>
             <Accordion.Item eventKey="1">
-              <Accordion.Header onClick={() => setActiveKey("1")}>
+              <Accordion.Header onClick={() => setActiveKey((ak) => (ak === "1" ? "-1" : "1"))}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
                   <div>
                     <h5>Show us what you got!</h5>
@@ -247,7 +257,7 @@ export default function OrderNew() {
               </Accordion.Body>
             </Accordion.Item>
             <Accordion.Item eventKey="2">
-              <Accordion.Header onClick={() => setActiveKey("2")}>
+              <Accordion.Header onClick={() => setActiveKey((ak) => (ak === "2" ? "-1" : "2"))}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
                   <div>
                     <h5>Payments information</h5>
@@ -339,7 +349,7 @@ export default function OrderNew() {
                     orderPaid: true,
                     userId: cogUsername,
                     storeId: "0000",
-                    address: `${fields.addr_line1}, ${fields.addr_line2}`,
+                    address: `${fields.addr_line1}${fields.addr_line2 ? ", " : " "}${fields.addr_line2 ?? ""}`,
                     orderdate: new Date().toISOString(),
                     city: `${fields.addr_city}`,
                     zipcode: fields.addr_postal,

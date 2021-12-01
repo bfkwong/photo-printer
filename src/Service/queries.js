@@ -46,6 +46,45 @@ export async function getAllOrders() {
     const responseJson = await response.json();
     return responseJson;
   } catch (e) {
-    return [];
+    return "ERROR";
+  }
+}
+
+export async function getUserInfo() {
+  try {
+    const cogUserId = await Auth.currentSession();
+    const cogUsername = cogUserId?.idToken?.payload["cognito:username"];
+
+    const reqUrl = new Request(`https://y5fcpp24be.execute-api.us-west-2.amazonaws.com/${cogUsername}`);
+    const response = await fetch(reqUrl, {
+      method: "GET",
+      headers: {
+        Authorization: cogUserId?.idToken?.jwtToken
+      }
+    });
+    const responseJson = await response.json();
+    return responseJson;
+  } catch (e) {
+    return "ERROR";
+  }
+}
+
+export async function postUserInfo(payload) {
+  try {
+    const cogUserId = await Auth.currentSession();
+    const cogUsername = cogUserId?.idToken?.payload["cognito:username"];
+
+    const reqUrl = new Request(`https://y5fcpp24be.execute-api.us-west-2.amazonaws.com/${cogUsername}`);
+    const response = await fetch(reqUrl, {
+      method: "PATCH",
+      headers: {
+        Authorization: cogUserId?.idToken?.jwtToken
+      },
+      body: JSON.stringify(payload)
+    });
+    const responseJson = await response.json();
+    return responseJson;
+  } catch (e) {
+    return "ERROR";
   }
 }
