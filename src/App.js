@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import Auth from "@aws-amplify/auth";
@@ -58,6 +58,7 @@ function App() {
 
   return (
     <Routes>
+      <Route index element={<Navigate to="/customer" />}></Route>
       <Route path="ftu" element={<FTU />}></Route>
       <Route path="customer/*" element={<Customer />}></Route>
       <Route path="admin/*" element={<Admin />}></Route>

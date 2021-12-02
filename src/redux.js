@@ -55,4 +55,8 @@ export const getCompletedFTU = (state) => state.completedFTU;
 export const getUserInfo = (state) => state.userInfo;
 export const getAllUsers = (state) => state.allUsers ?? [];
 
-export default createStore(reducer, initialState, window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__());
+export default createStore(
+  reducer,
+  initialState,
+  window?.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__()
+);
