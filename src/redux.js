@@ -6,6 +6,7 @@ export const SET_ALL_ORDERS = "SET_ALL_ORDERS";
 export const SET_COMPLETED_FTU = "SET_COMPLETED_FTU";
 export const SET_USER_INFO = "SET_USER_INFO";
 export const SET_ALL_USERS = "SET_ALL_USERS";
+export const RESET_REDUX = "RESET_REDUX";
 
 const initialState = {
   userType: null
@@ -43,17 +44,19 @@ function reducer(state, action) {
         ...state,
         allUsers: action.payload
       };
+    case RESET_REDUX:
+      return {};
     default:
       return { ...state };
   }
 }
 
-export const getUserType = (state) => state.userType;
-export const getCogUsername = (state) => state.cogUsername;
-export const getAllOrders = (state) => state.allOrders;
-export const getCompletedFTU = (state) => state.completedFTU;
-export const getUserInfo = (state) => state.userInfo;
-export const getAllUsers = (state) => state.allUsers ?? [];
+export const getUserType = (state) => state?.userType;
+export const getCogUsername = (state) => state?.cogUsername;
+export const getAllOrders = (state) => state?.allOrders;
+export const getCompletedFTU = (state) => state?.completedFTU;
+export const getUserInfo = (state) => state?.userInfo;
+export const getAllUsers = (state) => state?.allUsers ?? [];
 
 export default createStore(
   reducer,

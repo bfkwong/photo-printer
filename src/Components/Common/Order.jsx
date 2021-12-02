@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router";
 import { Storage } from "aws-amplify";
 
-import { assignOrder, deleteOrder, getAllOrders as getAllOrdersQry } from "../../Service/queries";
+import { assignOrder, deleteOrder, getAllOrdersByStore, getAllOrders as getAllOrdersQry } from "../../Service/queries";
 import { UploadedImage } from "./OrderNew";
 import { useSelector, useDispatch } from "react-redux";
 import { getAllOrders, getAllUsers, getUserType, SET_ALL_ORDERS } from "../../redux";
@@ -53,8 +53,13 @@ export default function Order(props) {
             const delResp = await deleteOrder(orderId);
             if (delResp !== "ERROR") {
               (async () => {
-                const allOrdersResp = await getAllOrdersQry();
-                dispatchRdx({ type: SET_ALL_ORDERS, payload: allOrdersResp !== "ERROR" ? allOrdersResp : [] });
+                if (userType !== "customer") {
+                  const allOrdersResp = await getAllOrdersByStore("0000");
+                  dispatchRdx({ type: SET_ALL_ORDERS, payload: allOrdersResp !== "ERROR" ? allOrdersResp : [] });
+                } else {
+                  const allOrdersResp = await getAllOrdersQry();
+                  dispatchRdx({ type: SET_ALL_ORDERS, payload: allOrdersResp !== "ERROR" ? allOrdersResp : [] });
+                }
               })();
               navigate(-1);
             }
@@ -76,27 +81,30 @@ export default function Order(props) {
               </Form.Group>
             </Col>
             <Col>
-              <Form.Group className="mb-3">
-                <Form.Label>Assigned printer</Form.Label>
-                <Form.Select
-                  value={order?.assigned}
-                  onChange={async (e) => {
-                    await assignOrder(orderId, e.target.value);
-                    (async () => {
-                      const allOrdersResp = await getAllOrdersQry();
-                      dispatchRdx({ type: SET_ALL_ORDERS, payload: allOrdersResp !== "ERROR" ? allOrdersResp : [] });
-                    })();
-                  }}>
-                  {allUsers?.map &&
-                    allUsers
-                      .filter((user) => user.AccessLevel === "printer")
-                      .map((user) => (
-                        <option value={user.UserID}>
-                          {user.FirstName} {user.LastName}
-                        </option>
-                      ))}
-                </Form.Select>
-              </Form.Group>
+              {userType === "admin" && (
+                <Form.Group className="mb-3">
+                  <Form.Label>Assigned printer</Form.Label>
+                  <Form.Select
+                    value={order?.assigned}
+                    onChange={async (e) => {
+                      await assignOrder(orderId, e.target.value);
+                      (async () => {
+                        const allOrdersResp = await getAllOrdersByStore("0000");
+                        dispatchRdx({ type: SET_ALL_ORDERS, payload: allOrdersResp !== "ERROR" ? allOrdersResp : [] });
+                      })();
+                    }}>
+                    <option value="employee name">Unassigned</option>
+                    {allUsers?.map &&
+                      allUsers
+                        .filter((user) => user.AccessLevel === "printer")
+                        .map((user) => (
+                          <option value={user.UserID}>
+                            {user.FirstName} {user.LastName}
+                          </option>
+                        ))}
+                  </Form.Select>
+                </Form.Group>
+              )}
             </Col>
           </Row>
         </Container>

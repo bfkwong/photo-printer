@@ -1,8 +1,12 @@
 import React from "react";
 import { Navbar, Container, Nav, NavDropdown } from "react-bootstrap";
 import { Auth } from "aws-amplify";
+import { useDispatch } from "react-redux";
+import { RESET_REDUX } from "../../redux";
 
 export default function NavigationBar(props) {
+  const dispatch = useDispatch();
+
   return (
     <Navbar bg="dark" variant="dark" expand="sm" collapseOnSelect>
       <Container>
@@ -31,6 +35,7 @@ export default function NavigationBar(props) {
             <Nav.Link
               onClick={async () => {
                 try {
+                  await dispatch({ type: RESET_REDUX });
                   await Auth.signOut();
                   window.location.reload();
                 } catch (error) {

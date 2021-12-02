@@ -68,7 +68,7 @@ function AdminHome(props) {
                   />
                   <PrinterBdg
                     onClick={async () => {
-                      await updateUserType(admin.UserID, "customer");
+                      await updateUserType(admin.UserID, "printer");
                       props.getAllUser();
                     }}
                   />

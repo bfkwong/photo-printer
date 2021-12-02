@@ -5,15 +5,12 @@ import { useSelector } from "react-redux";
 
 import NavigationBar from "../Common/NavigationBar";
 import OrderList from "../Common/OrderList";
-import CustomerList from "../Common/CustomerList";
-import { getAllOrders, getAllUsers, getUserInfo, getUserType, SET_ALL_ORDERS, SET_ALL_USERS } from "../../redux";
+import { getAllOrders, getUserInfo, getUserType, SET_ALL_ORDERS } from "../../redux";
 import { userTypes } from "../../constants";
 import Order from "../Common/Order";
 import OrderNew from "../Common/OrderNew";
-import CustomerNew from "../Common/CustomerNew";
 import { useDispatch } from "react-redux";
 import { getAllOrdersByStore } from "../../Service/queries";
-import { getAllUsers as getAllUsersQry } from "../../Service/queries";
 
 function PrinterHome() {
   return (
@@ -48,7 +45,6 @@ export default function Printer(props) {
   const dispatch = useDispatch();
   const userType = useSelector(getUserType);
   const userInfo = useSelector(getUserInfo);
-  const allUsers = useSelector(getAllUsers);
   const orders = useSelector(getAllOrders);
 
   React.useEffect(() => {
@@ -70,10 +66,7 @@ export default function Printer(props) {
       <NavigationBar
         title="Printer"
         titleAction={() => navigate("/printer")}
-        config={[
-          { type: "normal", text: "Orders", action: () => navigate("/printer/orders") },
-          { type: "normal", text: "Customers", action: () => navigate("/printer/customers") }
-        ]}
+        config={[{ type: "normal", text: "Orders", action: () => navigate("/printer/orders") }]}
       />
       <Container fluid="sm" style={{ marginTop: 10 }}>
         <Routes>
@@ -86,14 +79,6 @@ export default function Printer(props) {
             />
             <Route path=":orderId" element={<Order />} />
             <Route path="new" element={<OrderNew />} />
-          </Route>
-          <Route path="customers">
-            <Route
-              index
-              element={<CustomerList customers={allUsers.filter((user) => user.AccessLevel === userTypes.CUSTOMER)} />}
-            />
-            <Route path=":customerId" element={<h1>Customer</h1>} />
-            <Route path="new" element={<CustomerNew />} />
           </Route>
           <Route path="*" element={<PrinterHome />}></Route>
         </Routes>

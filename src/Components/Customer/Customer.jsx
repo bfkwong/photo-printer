@@ -11,6 +11,7 @@ import Order from "../Common/Order";
 import OrderNew from "../Common/OrderNew";
 import Gallery from "../Common/Gallery";
 import { useDispatch } from "react-redux";
+import { getAllOrders as getAllOrdersQry } from "../../Service/queries";
 
 function CustomerHome() {
   return (
@@ -48,7 +49,7 @@ export default function Customer(props) {
 
   useEffect(() => {
     (async () => {
-      const allOrdersResp = await getAllOrders();
+      const allOrdersResp = await getAllOrdersQry();
       dispatch({ type: SET_ALL_ORDERS, payload: allOrdersResp !== "ERROR" ? allOrdersResp : [] });
     })();
   }, [dispatch]);

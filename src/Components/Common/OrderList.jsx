@@ -28,29 +28,33 @@ export default function OrderList(props) {
         </thead>
         <tbody>
           {usingOrder?.map &&
-            usingOrder.map((order) => (
-              <tr onClick={() => navigate(`/${userType}/orders/${order.orderId}`)}>
-                <td>{order.orderTitle}</td>
-                <td>{order.userId}</td>
-                <td>{order.assigned}</td>
-                <td>
-                  {!order.status && <NewOrder />}
-                  {order.status === "issue" && <Issues />}
-                  {order.status === "shipped" && <Shipped />}
-                  {order.status === "resolved" && <Resolved />}
-                </td>
-              </tr>
-            ))}
-          <tr>
-            <td colSpan="5" style={{ textAlign: "center" }} onClick={() => navigate(`/${userType}/orders/new`)}>
-              <b>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <Plus size={30} />
-                  <div>Create a new order</div>
-                </div>
-              </b>
-            </td>
-          </tr>
+            usingOrder
+              .sort((a, b) => (a.assigned === "employee name" ? -1 : 1))
+              .map((order) => (
+                <tr onClick={() => navigate(`/${userType}/orders/${order.orderId}`)}>
+                  <td>{order.orderTitle}</td>
+                  <td>{order.userId}</td>
+                  <td>{order.assigned === "employee name" ? "unassigned" : order.assigned}</td>
+                  <td>
+                    {!order.status && <NewOrder />}
+                    {order.status === "issue" && <Issues />}
+                    {order.status === "shipped" && <Shipped />}
+                    {order.status === "resolved" && <Resolved />}
+                  </td>
+                </tr>
+              ))}
+          {userType === "customer" && (
+            <tr>
+              <td colSpan="5" style={{ textAlign: "center" }} onClick={() => navigate(`/${userType}/orders/new`)}>
+                <b>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Plus size={30} />
+                    <div>Create a new order</div>
+                  </div>
+                </b>
+              </td>
+            </tr>
+          )}
         </tbody>
       </Table>
     </>
