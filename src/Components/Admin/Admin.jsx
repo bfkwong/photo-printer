@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useNavigate, Routes, Route, Navigate } from "react-router-dom";
 import { Container, Row, Col, Table } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
@@ -13,12 +13,12 @@ import { getUserType, SET_ALL_ORDERS, SET_ALL_USERS } from "../../redux";
 import { userTypes } from "../../constants";
 import CustomerNew from "../Common/CustomerNew";
 import PrinterNew from "../Common/PrinterNew";
-import { getAllOrdersByStore, getAllUsers } from "../../Service/queries";
+import { getAllOrdersByStore, getAllUsers, updateUserType } from "../../Service/queries";
 import { getAllUsers as getAllUsersRdx } from "../../redux";
 import Customer from "../Common/Customer";
 import Printer from "../Common/Printer";
 import { Plus } from "react-bootstrap-icons";
-import { GoodStanding } from "../Common/Badges";
+import { CustomerBdg, PrinterBdg } from "../Common/Badges";
 
 function AdminHome(props) {
   return (
@@ -44,23 +44,34 @@ function AdminHome(props) {
           </Col>
         </Row>
       </Container>
-      <h3>Your admin team!</h3>
+      <h3 style={{ marginTop: 35 }}>Your admin team</h3>
       <Table hover style={{ marginTop: 20 }}>
         <thead>
           <tr>
             <th>Name</th>
             <th>Email</th>
-            <th>Status</th>
+            <th>Downgrade to</th>
           </tr>
         </thead>
         <tbody>
           {props?.admins?.map &&
             props.admins.map((admin) => (
-              <tr onClick={() => props.navigate(`/admin/admins/${admin.UserID}`)}>
+              <tr>
                 <td>{`${admin.FirstName} ${admin.LastName}`}</td>
                 <td>{admin.Email}</td>
                 <td>
-                  <GoodStanding />
+                  <CustomerBdg
+                    onClick={async () => {
+                      await updateUserType(admin.UserID, "customer");
+                      props.getAllUser();
+                    }}
+                  />
+                  <PrinterBdg
+                    onClick={async () => {
+                      await updateUserType(admin.UserID, "customer");
+                      props.getAllUser();
+                    }}
+                  />
                 </td>
               </tr>
             ))}
@@ -86,18 +97,20 @@ export default function Admin(props) {
   const allUsers = useSelector(getAllUsersRdx);
   const dispatch = useDispatch();
 
+  const getAllUser = useCallback(async () => {
+    const allUsersResp = await getAllUsers();
+    if (allUsersResp !== "ERROR") {
+      dispatch({ type: SET_ALL_USERS, payload: allUsersResp !== "ERROR" ? allUsersResp : [] });
+    }
+  }, [dispatch]);
+
   React.useEffect(() => {
-    (async () => {
-      const allUsersResp = await getAllUsers();
-      if (allUsersResp !== "ERROR") {
-        dispatch({ type: SET_ALL_USERS, payload: allUsersResp !== "ERROR" ? allUsersResp : [] });
-      }
-    })();
+    getAllUser();
     (async () => {
       const allOrdersResp = await getAllOrdersByStore("0000");
       dispatch({ type: SET_ALL_ORDERS, payload: allOrdersResp !== "ERROR" ? allOrdersResp : [] });
     })();
-  }, [dispatch]);
+  }, [dispatch, getAllUser]);
 
   if (userType === userTypes.CUSTOMER) {
     return <Navigate to="/customer" />;
@@ -146,6 +159,7 @@ export default function Admin(props) {
               <AdminHome
                 navigate={navigate}
                 admins={allUsers.filter((user) => user.AccessLevel.toLowerCase() === "admin")}
+                getAllUser={getAllUser}
               />
             }
           />

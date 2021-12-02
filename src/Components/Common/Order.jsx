@@ -8,7 +8,7 @@ import { assignOrder, deleteOrder, getAllOrders as getAllOrdersQry } from "../..
 import { UploadedImage } from "./OrderNew";
 import { useSelector, useDispatch } from "react-redux";
 import { getAllOrders, getAllUsers, getUserType, SET_ALL_ORDERS } from "../../redux";
-import { Issues, NewOrder, Resolved, Shipped } from "./Badges";
+import { NewOrder } from "./Badges";
 import { Col, Container, Row, Form } from "react-bootstrap";
 
 export default function Order(props) {
@@ -80,8 +80,12 @@ export default function Order(props) {
                 <Form.Label>Assigned printer</Form.Label>
                 <Form.Select
                   value={order?.assigned}
-                  onClick={async (e) => {
-                    assignOrder(orderId, e.target.value);
+                  onChange={async (e) => {
+                    await assignOrder(orderId, e.target.value);
+                    (async () => {
+                      const allOrdersResp = await getAllOrdersQry();
+                      dispatchRdx({ type: SET_ALL_ORDERS, payload: allOrdersResp !== "ERROR" ? allOrdersResp : [] });
+                    })();
                   }}>
                   {allUsers?.map &&
                     allUsers

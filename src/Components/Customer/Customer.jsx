@@ -1,15 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate, Routes, Route, Navigate } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
 import { useSelector } from "react-redux";
 
 import NavigationBar from "../Common/NavigationBar";
 import OrderList from "../Common/OrderList";
-import { getAllOrders, getUserType } from "../../redux";
+import { getAllOrders, getUserType, SET_ALL_ORDERS } from "../../redux";
 import { userTypes } from "../../constants";
 import Order from "../Common/Order";
 import OrderNew from "../Common/OrderNew";
 import Gallery from "../Common/Gallery";
+import { useDispatch } from "react-redux";
 
 function CustomerHome() {
   return (
@@ -41,8 +42,16 @@ function CustomerHome() {
 
 export default function Customer(props) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const userType = useSelector(getUserType);
   const orders = useSelector(getAllOrders);
+
+  useEffect(() => {
+    (async () => {
+      const allOrdersResp = await getAllOrders();
+      dispatch({ type: SET_ALL_ORDERS, payload: allOrdersResp !== "ERROR" ? allOrdersResp : [] });
+    })();
+  }, [dispatch]);
 
   if (userType === userTypes.ADMIN) {
     return <Navigate to="/admin" />;

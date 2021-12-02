@@ -41,3 +41,15 @@ export const Resolved = () => (
     Resolved 🎉
   </Badge>
 );
+
+export const CustomerBdg = (props) => (
+  <Badge pill bg="primary" style={{ marginRight: 10 }} onClick={props.onClick}>
+    🛍 Customer
+  </Badge>
+);
+
+export const PrinterBdg = (props) => (
+  <Badge pill bg="success" onClick={props.onClick}>
+    🖨 Printer
+  </Badge>
+);

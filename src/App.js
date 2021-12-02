@@ -32,11 +32,6 @@ function App() {
     })();
 
     (async () => {
-      const allOrdersResp = await getAllOrders();
-      dispatch({ type: SET_ALL_ORDERS, payload: allOrdersResp !== "ERROR" ? allOrdersResp : [] });
-    })();
-
-    (async () => {
       const userInfo = await getUserInfo();
       dispatch({ type: SET_COMPLETED_FTU, payload: !(userInfo.FirstName === "") });
       dispatch({ type: SET_USER_INFO, payload: userInfo });
