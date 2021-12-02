@@ -7,52 +7,16 @@ import { Plus } from "react-bootstrap-icons";
 import { getAllOrders, getUserType } from "../../redux";
 import { NewOrder, Issues, Shipped, Resolved } from "./Badges";
 
-const samplePayload = [
-  {
-    id: "1",
-    title: "Trip to Rome",
-    customer: "Mark",
-    printer: "Otto",
-    status: "new_order"
-  },
-  {
-    id: "2",
-    title: "Company retreat to Big Sur",
-    customer: "Jacob",
-    printer: "Thornton",
-    status: "issue"
-  },
-  {
-    id: "3",
-    title: "Cal Poly orientation",
-    customer: "Jeffrey",
-    printer: "Armstrong",
-    status: "shipped"
-  },
-  {
-    id: "4",
-    title: "Big Boba Convention",
-    customer: "Edward",
-    printer: "James",
-    status: "shipped"
-  },
-  {
-    id: "5",
-    title: "JavaScript Convention",
-    customer: "Cody",
-    printer: "Turnwood",
-    status: "resolved"
-  }
-];
-
 export default function OrderList(props) {
   const userType = useSelector(getUserType);
   const orders = useSelector(getAllOrders);
   const navigate = useNavigate();
 
+  const usingOrder = props.orders ?? orders;
+
   return (
     <>
-      <h3>🎞 You've got {orders?.length ?? 0} active orders</h3>
+      <h3>🎞 You've got {usingOrder?.length ?? 0} active orders</h3>
       <Table hover style={{ marginTop: 20 }}>
         <thead>
           <tr>
@@ -63,8 +27,8 @@ export default function OrderList(props) {
           </tr>
         </thead>
         <tbody>
-          {orders?.map &&
-            orders.map((order) => (
+          {usingOrder?.map &&
+            usingOrder.map((order) => (
               <tr onClick={() => navigate(`/${userType}/orders/${order.orderId}`)}>
                 <td>{order.orderTitle}</td>
                 <td>{order.userId}</td>

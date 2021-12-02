@@ -25,7 +25,7 @@ export default function CustomerList(props) {
         <tbody>
           {props?.customers?.map &&
             props.customers.map((customer) => (
-              <tr>
+              <tr onClick={() => navigate(`/${userType}/customers/${customer.UserID}`)}>
                 <td>{`${customer.FirstName} ${customer.LastName}`}</td>
                 <td>{customer.Email}</td>
                 <td>

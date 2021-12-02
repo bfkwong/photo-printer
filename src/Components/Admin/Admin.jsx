@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate, Routes, Route, Navigate } from "react-router-dom";
-import { Container, Row, Col } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { Container, Row, Col, Table } from "react-bootstrap";
+import { useSelector, useDispatch } from "react-redux";
 
 import NavigationBar from "../Common/NavigationBar";
 import OrderList from "../Common/OrderList";
@@ -9,13 +9,18 @@ import Order from "../Common/Order";
 import OrderNew from "../Common/OrderNew";
 import CustomerList from "../Common/CustomerList";
 import PrinterList from "../Common/PrinterList";
-import { getUserType } from "../../redux";
+import { getUserType, SET_ALL_ORDERS, SET_ALL_USERS } from "../../redux";
 import { userTypes } from "../../constants";
 import CustomerNew from "../Common/CustomerNew";
 import PrinterNew from "../Common/PrinterNew";
-import { getAllUsers } from "../../Service/queries";
+import { getAllOrdersByStore, getAllUsers } from "../../Service/queries";
+import { getAllUsers as getAllUsersRdx } from "../../redux";
+import Customer from "../Common/Customer";
+import Printer from "../Common/Printer";
+import { Plus } from "react-bootstrap-icons";
+import { GoodStanding } from "../Common/Badges";
 
-function AdminHome() {
+function AdminHome(props) {
   return (
     <div>
       <h3>Ciao Bryan 👋 here's a status update</h3>
@@ -39,6 +44,38 @@ function AdminHome() {
           </Col>
         </Row>
       </Container>
+      <h3>Your admin team!</h3>
+      <Table hover style={{ marginTop: 20 }}>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {props?.admins?.map &&
+            props.admins.map((admin) => (
+              <tr onClick={() => props.navigate(`/admin/admins/${admin.UserID}`)}>
+                <td>{`${admin.FirstName} ${admin.LastName}`}</td>
+                <td>{admin.Email}</td>
+                <td>
+                  <GoodStanding />
+                </td>
+              </tr>
+            ))}
+          <tr>
+            <td colSpan="5" style={{ textAlign: "center" }} onClick={() => props.navigate(`/admin/admins/new`)}>
+              <b>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Plus size={30} />
+                  <div>Invite a new admin</div>
+                </div>
+              </b>
+            </td>
+          </tr>
+        </tbody>
+      </Table>
     </div>
   );
 }
@@ -46,16 +83,21 @@ function AdminHome() {
 export default function Admin(props) {
   const navigate = useNavigate();
   const userType = useSelector(getUserType);
-  const [allUsers, setAllUsers] = React.useState([]);
+  const allUsers = useSelector(getAllUsersRdx);
+  const dispatch = useDispatch();
 
   React.useEffect(() => {
     (async () => {
       const allUsersResp = await getAllUsers();
       if (allUsersResp !== "ERROR") {
-        setAllUsers(allUsersResp);
+        dispatch({ type: SET_ALL_USERS, payload: allUsersResp !== "ERROR" ? allUsersResp : [] });
       }
     })();
-  }, []);
+    (async () => {
+      const allOrdersResp = await getAllOrdersByStore("0000");
+      dispatch({ type: SET_ALL_ORDERS, payload: allOrdersResp !== "ERROR" ? allOrdersResp : [] });
+    })();
+  }, [dispatch]);
 
   if (userType === userTypes.CUSTOMER) {
     return <Navigate to="/customer" />;
@@ -87,7 +129,7 @@ export default function Admin(props) {
               index
               element={<CustomerList customers={allUsers.filter((user) => user.AccessLevel === userTypes.CUSTOMER)} />}
             />
-            <Route path=":customerId" element={<h1>Customer</h1>} />
+            <Route path=":customerId" element={<Customer />} />
             <Route path="new" element={<CustomerNew />} />
           </Route>
           <Route path="printers">
@@ -95,10 +137,18 @@ export default function Admin(props) {
               index
               element={<PrinterList printers={allUsers.filter((user) => user.AccessLevel === userTypes.PRINTER)} />}
             />
-            <Route path=":printerId" element={<h1>Printer</h1>} />
+            <Route path=":printerId" element={<Printer />} />
             <Route path="new" element={<PrinterNew />} />
           </Route>
-          <Route path="*" element={<AdminHome />} />
+          <Route
+            path="*"
+            element={
+              <AdminHome
+                navigate={navigate}
+                admins={allUsers.filter((user) => user.AccessLevel.toLowerCase() === "admin")}
+              />
+            }
+          />
         </Routes>
       </Container>
     </div>

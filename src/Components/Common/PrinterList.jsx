@@ -25,7 +25,7 @@ export default function PrinterList(props) {
         <tbody>
           {props?.printers?.map &&
             props.printers.map((printer) => (
-              <tr>
+              <tr onClick={() => navigate(`/${userType}/printers/${printer.UserID}`)}>
                 <td>{`${printer.FirstName} ${printer.LastName}`}</td>
                 <td>{printer.Email}</td>
                 <td>
@@ -34,7 +34,7 @@ export default function PrinterList(props) {
               </tr>
             ))}
           <tr>
-            <td colSpan="5" style={{ textAlign: "center" }} onClick={() => navigate(`/${userType}/printer/new`)}>
+            <td colSpan="5" style={{ textAlign: "center" }} onClick={() => navigate(`/${userType}/printers/new`)}>
               <b>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <Plus size={30} />

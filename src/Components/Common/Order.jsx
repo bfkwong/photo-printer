@@ -4,31 +4,35 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router";
 import { Storage } from "aws-amplify";
 
-import { deleteOrder, getAllOrders as getAllOrdersQry } from "../../Service/queries";
+import { assignOrder, deleteOrder, getAllOrders as getAllOrdersQry } from "../../Service/queries";
 import { UploadedImage } from "./OrderNew";
 import { useSelector, useDispatch } from "react-redux";
-import { getAllOrders, SET_ALL_ORDERS } from "../../redux";
-import { NewOrder } from "./Badges";
-import { Col, Container, Row } from "react-bootstrap";
+import { getAllOrders, getAllUsers, getUserType, SET_ALL_ORDERS } from "../../redux";
+import { Issues, NewOrder, Resolved, Shipped } from "./Badges";
+import { Col, Container, Row, Form } from "react-bootstrap";
 
 export default function Order(props) {
   const { orderId } = useParams();
   const dispatchRdx = useDispatch();
   const navigate = useNavigate();
+  const userType = useSelector(getUserType);
+  const allUsers = useSelector(getAllUsers);
   const orders = useSelector(getAllOrders);
   const order = orders?.find ? orders.find((ord) => ord.orderId === orderId) : {};
   const [sImageUrls, setSImageUrls] = React.useState([]);
 
   useEffect(() => {
+    const orderLoc = orders?.find ? orders.find((ord) => ord.orderId === orderId) : {};
     setSImageUrls([]);
-    order?.imageurl?.forEach &&
-      order.imageurl.forEach(async (img) => {
+
+    orderLoc?.imageurl?.forEach &&
+      orderLoc.imageurl.forEach(async (img) => {
         const url = await Storage.get(img.split("/").slice(2).join("/"), {
           level: "protected"
         });
         setSImageUrls((siu) => [...siu, url]);
       });
-  }, [order.imageurl]);
+  }, [orders, orderId]);
 
   useEffect(() => {
     console.log(sImageUrls);
@@ -39,7 +43,7 @@ export default function Order(props) {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <h3>
-            {order.orderTitle} - {new Date(order.orderdate).toLocaleDateString()}
+            {order?.orderTitle} - {new Date(order?.orderdate).toLocaleDateString()}
           </h3>
         </div>
         <Trash2Fill
@@ -57,29 +61,66 @@ export default function Order(props) {
           }}
         />
       </div>
-      <NewOrder />
+      {userType !== "customer" ? (
+        <Container style={{ padding: 0 }}>
+          <Row>
+            <Col>
+              <Form.Group className="mb-3">
+                <Form.Label>Order status</Form.Label>
+                <Form.Select>
+                  <option value="new_order">New Order 📥</option>
+                  <option value="issues">Issue 🚨</option>
+                  <option value="shipped">Shipped 🚀</option>
+                  <option value="resolved">Resolved 🎉</option>
+                </Form.Select>
+              </Form.Group>
+            </Col>
+            <Col>
+              <Form.Group className="mb-3">
+                <Form.Label>Assigned printer</Form.Label>
+                <Form.Select
+                  value={order?.assigned}
+                  onClick={async (e) => {
+                    assignOrder(orderId, e.target.value);
+                  }}>
+                  {allUsers?.map &&
+                    allUsers
+                      .filter((user) => user.AccessLevel === "printer")
+                      .map((user) => (
+                        <option value={user.UserID}>
+                          {user.FirstName} {user.LastName}
+                        </option>
+                      ))}
+                </Form.Select>
+              </Form.Group>
+            </Col>
+          </Row>
+        </Container>
+      ) : (
+        <NewOrder />
+      )}
       <h6 style={{ marginTop: 20 }}>Order description</h6>
-      <p>{order.orderDescription ?? "N/A"}</p>
+      <p>{order?.orderDescription ?? "N/A"}</p>
       <Container spacing={3} style={{ marginTop: 15 }}>
         <Row>
           <Col xs={6} sm={4} style={{ padding: 0 }}>
             <h6>Address</h6>
             <p>
-              {order.address}
+              {order?.address}
               <br />
-              {order.city}, {order.province}, {order.zipcode}
+              {order?.city}, {order?.province}, {order?.zipcode}
             </p>
           </Col>
           <Col xs={6} sm={4} style={{ padding: 0 }}>
             <h6>Tracking Info</h6>
-            <a href={order.trackingurl}>Shippo tracking link</a>
+            <a href={order?.trackingurl}>Shippo tracking link</a>
             <p>
-              <i>Tracking: {order.trackingNumber ?? "N/A"}</i>
+              <i>Tracking: {order?.trackingNumber ?? "N/A"}</i>
             </p>
           </Col>
           <Col xs={6} sm={4} style={{ padding: 0 }}>
             <h6>Your printer</h6>
-            <p>{order.assigned}</p>
+            <p>{order?.assigned}</p>
           </Col>
         </Row>
       </Container>

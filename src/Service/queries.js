@@ -51,6 +51,27 @@ export async function getAllOrders() {
   }
 }
 
+export async function getAllOrdersByStore(storeId) {
+  try {
+    const cogUserId = await Auth.currentSession();
+
+    const reqUrl = new Request(
+      `https://qrt54y4ylj.execute-api.us-west-2.amazonaws.com/api/v1/ordermanagement/getallorder?storeId=${storeId}`
+    );
+    const response = await fetch(reqUrl, {
+      method: "GET",
+      mode: "cors",
+      headers: {
+        Authorization: cogUserId?.idToken?.jwtToken
+      }
+    });
+    const responseJson = await response.json();
+    return responseJson;
+  } catch (e) {
+    return "ERROR";
+  }
+}
+
 export async function getOrder(orderId) {
   try {
     const cogUserId = await Auth.currentSession();
@@ -132,6 +153,25 @@ export async function postUserInfo(payload) {
   }
 }
 
+export async function updateUserType(userId, AccessLevel) {
+  try {
+    const cogUserId = await Auth.currentSession();
+
+    const reqUrl = new Request(`https://y5fcpp24be.execute-api.us-west-2.amazonaws.com/${userId}`);
+    const response = await fetch(reqUrl, {
+      method: "PATCH",
+      headers: {
+        Authorization: cogUserId?.idToken?.jwtToken
+      },
+      body: JSON.stringify({ AccessLevel })
+    });
+    const responseJson = await response.json();
+    return responseJson;
+  } catch (e) {
+    return "ERROR";
+  }
+}
+
 export async function getAllUsers() {
   try {
     const cogUserId = await Auth.currentSession();
@@ -142,6 +182,33 @@ export async function getAllUsers() {
       headers: {
         Authorization: cogUserId?.idToken?.jwtToken
       }
+    });
+    const responseJson = await response.json();
+    return responseJson;
+  } catch (e) {
+    return "ERROR";
+  }
+}
+
+export async function assignOrder(orderId, employee) {
+  try {
+    const cogUserId = await Auth.currentSession();
+    const reqUrl = new Request(
+      `https://qrt54y4ylj.execute-api.us-west-2.amazonaws.com/api/v1/ordermanagement/assignorder`
+    );
+    const response = await fetch(reqUrl, {
+      method: "POST",
+      headers: {
+        Authorization: cogUserId?.idToken?.jwtToken
+      },
+      body: JSON.stringify({
+        body: {
+          assignOrder: {
+            orderId,
+            employee
+          }
+        }
+      })
     });
     const responseJson = await response.json();
     return responseJson;

@@ -6,11 +6,14 @@ import { useSelector } from "react-redux";
 import NavigationBar from "../Common/NavigationBar";
 import OrderList from "../Common/OrderList";
 import CustomerList from "../Common/CustomerList";
-import { getAllOrders, getUserType } from "../../redux";
+import { getAllOrders, getAllUsers, getUserInfo, getUserType, SET_ALL_ORDERS, SET_ALL_USERS } from "../../redux";
 import { userTypes } from "../../constants";
 import Order from "../Common/Order";
 import OrderNew from "../Common/OrderNew";
 import CustomerNew from "../Common/CustomerNew";
+import { useDispatch } from "react-redux";
+import { getAllOrdersByStore } from "../../Service/queries";
+import { getAllUsers as getAllUsersQry } from "../../Service/queries";
 
 function PrinterHome() {
   return (
@@ -42,8 +45,18 @@ function PrinterHome() {
 
 export default function Printer(props) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const userType = useSelector(getUserType);
+  const userInfo = useSelector(getUserInfo);
+  const allUsers = useSelector(getAllUsers);
   const orders = useSelector(getAllOrders);
+
+  React.useEffect(() => {
+    (async () => {
+      const allOrdersResp = await getAllOrdersByStore("0000");
+      dispatch({ type: SET_ALL_ORDERS, payload: allOrdersResp !== "ERROR" ? allOrdersResp : [] });
+    })();
+  }, [dispatch]);
 
   if (userType === userTypes.ADMIN) {
     return <Navigate to="/admin" />;
@@ -65,12 +78,20 @@ export default function Printer(props) {
       <Container fluid="sm" style={{ marginTop: 10 }}>
         <Routes>
           <Route path="orders">
-            <Route index element={<OrderList orders={orders} />} />
+            <Route
+              index
+              element={
+                <OrderList orders={orders?.filter && orders.filter((order) => order.assigned === userInfo.UserID)} />
+              }
+            />
             <Route path=":orderId" element={<Order />} />
             <Route path="new" element={<OrderNew />} />
           </Route>
           <Route path="customers">
-            <Route index element={<CustomerList />} />
+            <Route
+              index
+              element={<CustomerList customers={allUsers.filter((user) => user.AccessLevel === userTypes.CUSTOMER)} />}
+            />
             <Route path=":customerId" element={<h1>Customer</h1>} />
             <Route path="new" element={<CustomerNew />} />
           </Route>
