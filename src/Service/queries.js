@@ -39,6 +39,49 @@ export async function getAllOrders() {
     );
     const response = await fetch(reqUrl, {
       method: "GET",
+      mode: "cors",
+      headers: {
+        Authorization: cogUserId?.idToken?.jwtToken
+      }
+    });
+    const responseJson = await response.json();
+    return responseJson;
+  } catch (e) {
+    return "ERROR";
+  }
+}
+
+export async function getOrder(orderId) {
+  try {
+    const cogUserId = await Auth.currentSession();
+
+    const reqUrl = new Request(
+      `https://qrt54y4ylj.execute-api.us-west-2.amazonaws.com/api/v1/ordermanagement/getorder?orderId=${orderId}`
+    );
+    const response = await fetch(reqUrl, {
+      method: "GET",
+      mode: "cors",
+      headers: {
+        Authorization: cogUserId?.idToken?.jwtToken
+      }
+    });
+    const responseJson = await response.json();
+    return responseJson;
+  } catch (e) {
+    return "ERROR";
+  }
+}
+
+export async function deleteOrder(orderId) {
+  try {
+    const cogUserId = await Auth.currentSession();
+
+    const reqUrl = new Request(
+      `https://qrt54y4ylj.execute-api.us-west-2.amazonaws.com/api/v1/ordermanagement/deleteorder?orderId=${orderId}`
+    );
+    const response = await fetch(reqUrl, {
+      method: "DELETE",
+      mode: "cors",
       headers: {
         Authorization: cogUserId?.idToken?.jwtToken
       }
@@ -81,6 +124,24 @@ export async function postUserInfo(payload) {
         Authorization: cogUserId?.idToken?.jwtToken
       },
       body: JSON.stringify(payload)
+    });
+    const responseJson = await response.json();
+    return responseJson;
+  } catch (e) {
+    return "ERROR";
+  }
+}
+
+export async function getAllUsers() {
+  try {
+    const cogUserId = await Auth.currentSession();
+
+    const reqUrl = new Request(`https://y5fcpp24be.execute-api.us-west-2.amazonaws.com`);
+    const response = await fetch(reqUrl, {
+      method: "GET",
+      headers: {
+        Authorization: cogUserId?.idToken?.jwtToken
+      }
     });
     const responseJson = await response.json();
     return responseJson;

@@ -2,9 +2,13 @@ import React from "react";
 import { Accordion, Container, Row, Col, Form, Button, Image } from "react-bootstrap";
 import { BagXFill, CheckCircleFill, XCircleFill } from "react-bootstrap-icons";
 import { useSelector } from "react-redux";
+import { Storage } from "aws-amplify";
+import Auth from "@aws-amplify/auth";
+
 import { stateAbbrev } from "../../constants";
-import { getCogUsername, getUserInfo } from "../../redux";
-import { postNewOrder } from "../../Service/queries";
+import { getCogUsername, getUserInfo, SET_ALL_ORDERS } from "../../redux";
+import { getAllOrders, postNewOrder } from "../../Service/queries";
+import { useDispatch } from "react-redux";
 
 export function UploadedImage(props) {
   return (
@@ -16,8 +20,10 @@ export function UploadedImage(props) {
 }
 
 export default function OrderNew() {
+  const dispatchRdx = useDispatch();
   const cogUsername = useSelector(getCogUsername);
   const userInfo = useSelector(getUserInfo);
+
   const [fields, dispatch] = React.useReducer(
     (state, action) => {
       switch (action.type) {
@@ -57,9 +63,18 @@ export default function OrderNew() {
   const paymentSectionVld =
     fields.billing_cardnum && fields.billing_name && fields.billing_cvv && fields.billing_expdate && fields.billing_zip;
 
-  const fieldDispatch = (fieldId, fieldValue) => {
+  const fieldDispatch = React.useCallback((fieldId, fieldValue) => {
     dispatch({ type: "change_field", fieldId, fieldValue });
-  };
+  }, []);
+
+  React.useEffect(() => {
+    fieldDispatch("phone", userInfo?.Phone);
+    fieldDispatch("addr_line1", userInfo?.Street);
+    fieldDispatch("addr_city", userInfo?.City);
+    fieldDispatch("addr_state", userInfo?.State);
+    fieldDispatch("addr_postal", userInfo?.Zipcode);
+    fieldDispatch("billing_name", `${userInfo?.FirstName}${" " + userInfo?.LastName}`);
+  }, [fieldDispatch, userInfo]);
 
   if (orderStatus === "success") {
     return (
@@ -233,7 +248,7 @@ export default function OrderNew() {
                     dispatch({
                       type: "add_images",
                       newImages: Object.values(e.target.files).map((file) => ({
-                        ...file,
+                        file,
                         processed: URL.createObjectURL(file)
                       }))
                     });
@@ -342,6 +357,18 @@ export default function OrderNew() {
             <Button
               disabled={!fields.tc || !orderSectionVld || !photoSectionVld || !paymentSectionVld}
               onClick={async () => {
+                const credentials = await Auth.currentUserCredentials();
+
+                const imagesToUpload = [];
+                fields.images.forEach((img) => {
+                  const currentTime = `${new Date().getTime()}`.split("").reverse().join("");
+                  const imgToUpload = `${currentTime}_${img.file.name}`;
+                  imagesToUpload.push(imgToUpload);
+                  Storage.put(imgToUpload, img.file, {
+                    level: "protected"
+                  });
+                });
+
                 const resp = await postNewOrder({
                   newOrder: {
                     orderTitle: fields.orderName,
@@ -355,7 +382,7 @@ export default function OrderNew() {
                     zipcode: fields.addr_postal,
                     phone: fields.phone,
                     province: fields.addr_state,
-                    imageurl: ["s3.com/user/order1/asf", "s3.com/user/order1/egf", "s3.com/user/order1/fga"],
+                    imageurl: imagesToUpload.map((img) => `protected/${credentials.identityId}/${img}`),
                     trackingurl: "shippo.com/quihf21fho11if1oi/order1"
                   }
                 });
@@ -363,6 +390,10 @@ export default function OrderNew() {
                   setOrderStatus("error");
                 } else {
                   setOrderStatus("success");
+                  (async () => {
+                    const allOrdersResp = await getAllOrders();
+                    dispatchRdx({ type: SET_ALL_ORDERS, payload: allOrdersResp !== "ERROR" ? allOrdersResp : [] });
+                  })();
                 }
               }}>
               Place the order!

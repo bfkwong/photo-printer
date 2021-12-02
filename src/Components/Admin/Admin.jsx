@@ -13,6 +13,7 @@ import { getUserType } from "../../redux";
 import { userTypes } from "../../constants";
 import CustomerNew from "../Common/CustomerNew";
 import PrinterNew from "../Common/PrinterNew";
+import { getAllUsers } from "../../Service/queries";
 
 function AdminHome() {
   return (
@@ -45,6 +46,16 @@ function AdminHome() {
 export default function Admin(props) {
   const navigate = useNavigate();
   const userType = useSelector(getUserType);
+  const [allUsers, setAllUsers] = React.useState([]);
+
+  React.useEffect(() => {
+    (async () => {
+      const allUsersResp = await getAllUsers();
+      if (allUsersResp !== "ERROR") {
+        setAllUsers(allUsersResp);
+      }
+    })();
+  }, []);
 
   if (userType === userTypes.CUSTOMER) {
     return <Navigate to="/customer" />;
@@ -72,12 +83,18 @@ export default function Admin(props) {
             <Route path="new" element={<OrderNew />} />
           </Route>
           <Route path="customers">
-            <Route index element={<CustomerList />} />
+            <Route
+              index
+              element={<CustomerList customers={allUsers.filter((user) => user.AccessLevel === userTypes.CUSTOMER)} />}
+            />
             <Route path=":customerId" element={<h1>Customer</h1>} />
             <Route path="new" element={<CustomerNew />} />
           </Route>
           <Route path="printers">
-            <Route index element={<PrinterList />} />
+            <Route
+              index
+              element={<PrinterList printers={allUsers.filter((user) => user.AccessLevel === userTypes.PRINTER)} />}
+            />
             <Route path=":printerId" element={<h1>Printer</h1>} />
             <Route path="new" element={<PrinterNew />} />
           </Route>
