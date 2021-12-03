@@ -147,7 +147,7 @@ export default function Order(props) {
           </Col>
           <Col xs={6} sm={4} style={{ padding: 0 }}>
             <h6>Tracking Info</h6>
-            <a href={order?.trackingurl}>Shippo tracking link</a>
+            <a href={`https://${order.trackingUrl ?? order.trackingurl}`}>Shippo tracking link</a>
             <p>
               <i>Tracking: {order?.trackingNumber ?? "N/A"}</i>
             </p>

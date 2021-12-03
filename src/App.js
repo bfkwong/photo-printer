@@ -4,14 +4,14 @@ import { useDispatch } from "react-redux";
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import Auth from "@aws-amplify/auth";
 
-import { SET_ALL_ORDERS, SET_COG_USERID, SET_COMPLETED_FTU, SET_USER_INFO, SET_USER_TYPE } from "./redux";
+import { SET_COG_USERID, SET_COMPLETED_FTU, SET_USER_INFO, SET_USER_TYPE } from "./redux";
 import Printer from "./Components/Printer/Printer";
 import Admin from "./Components/Admin/Admin";
 import Customer from "./Components/Customer/Customer";
 import { userTypes } from "./constants";
 
 import "./Components/Common/Common.css";
-import { getAllOrders, getUserInfo } from "./Service/queries";
+import { getUserInfo } from "./Service/queries";
 import FTU from "./Components/FTU/FTU";
 
 const UnknownPage = () => (
