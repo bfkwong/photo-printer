@@ -216,3 +216,20 @@ export async function assignOrder(orderId, employee) {
     return "ERROR";
   }
 }
+
+export async function sendEmailNotif(email) {
+  try {
+    const cogUserId = await Auth.currentSession();
+    const reqUrl = new Request(`https://c7q2kkfj62.execute-api.us-west-2.amazonaws.com/dev/invite?email=${email}`);
+    const response = await fetch(reqUrl, {
+      method: "GET",
+      headers: {
+        Authorization: cogUserId?.idToken?.jwtToken
+      }
+    });
+    const responseJson = await response.json();
+    return responseJson;
+  } catch (e) {
+    return "ERROR";
+  }
+}

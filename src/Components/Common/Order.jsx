@@ -8,8 +8,15 @@ import { assignOrder, deleteOrder, getAllOrdersByStore, getAllOrders as getAllOr
 import { UploadedImage } from "./OrderNew";
 import { useSelector, useDispatch } from "react-redux";
 import { getAllOrders, getAllUsers, getUserType, SET_ALL_ORDERS } from "../../redux";
-import { NewOrder } from "./Badges";
+import { Issues, NewOrder, Resolved, Shipped } from "./Badges";
 import { Col, Container, Row, Form } from "react-bootstrap";
+
+const statusMapper = {
+  new_order: <NewOrder />,
+  issue: <Issues />,
+  shippoed: <Shipped />,
+  resolved: <Resolved />
+};
 
 export default function Order(props) {
   const { orderId } = useParams();
@@ -27,8 +34,10 @@ export default function Order(props) {
 
     orderLoc?.imageurl?.forEach &&
       orderLoc.imageurl.forEach(async (img) => {
+        const identityId = img.split("/")[1];
         const url = await Storage.get(img.split("/").slice(2).join("/"), {
-          level: "protected"
+          level: "protected",
+          identityId
         });
         setSImageUrls((siu) => [...siu, url]);
       });
@@ -72,9 +81,9 @@ export default function Order(props) {
             <Col>
               <Form.Group className="mb-3">
                 <Form.Label>Order status</Form.Label>
-                <Form.Select>
+                <Form.Select value={order.statues ?? "issue"}>
                   <option value="new_order">New Order 📥</option>
-                  <option value="issues">Issue 🚨</option>
+                  <option value="issue">Issue 🚨</option>
                   <option value="shipped">Shipped 🚀</option>
                   <option value="resolved">Resolved 🎉</option>
                 </Form.Select>
@@ -109,7 +118,7 @@ export default function Order(props) {
           </Row>
         </Container>
       ) : (
-        <NewOrder />
+        statusMapper[order.statues] ?? <NewOrder />
       )}
       <h6 style={{ marginTop: 20 }}>Order description</h6>
       <p>{order?.orderDescription ?? "N/A"}</p>

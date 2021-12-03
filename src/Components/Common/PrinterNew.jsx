@@ -1,6 +1,7 @@
 import React from "react";
 import { Accordion, Container, Row, Col, Form, Button } from "react-bootstrap";
 import { BagXFill, CheckCircleFill } from "react-bootstrap-icons";
+import { sendEmailNotif } from "../../Service/queries";
 
 export default function PrinterNew() {
   const [fields, dispatch] = React.useReducer((state, action) => {
@@ -13,7 +14,7 @@ export default function PrinterNew() {
   }, {});
   const [orderStatus, setOrderStatus] = React.useState();
 
-  const orderSectionVld = fields.firstName && fields.lastName && fields.email && fields.phone;
+  const orderSectionVld = fields.email;
 
   const fieldDispatch = (fieldId, fieldValue) => {
     dispatch({ type: "change_field", fieldId, fieldValue });
@@ -31,7 +32,7 @@ export default function PrinterNew() {
             marginTop: 30
           }}>
           <CheckCircleFill color="green" size="90" />
-          <h4 style={{ marginTop: 30 }}>Order placed!</h4>
+          <h4 style={{ marginTop: 30 }}>Printer invited!</h4>
         </div>
       </Container>
     );
@@ -66,7 +67,7 @@ export default function PrinterNew() {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
                   <div>
                     <h5>Tell us about the printer</h5>
-                    <p style={{ margin: 0 }}>Some info like name, email address, phone</p>
+                    <p style={{ margin: 0 }}>We just need their email</p>
                   </div>
                   {orderSectionVld && (
                     <div style={{ marginRight: 20 }}>
@@ -77,34 +78,10 @@ export default function PrinterNew() {
               </Accordion.Header>
               <Accordion.Body>
                 <Row>
-                  <Col xs={12} sm={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>First Name</Form.Label>
-                      <Form.Control
-                        value={fields.firstName}
-                        onChange={(e) => fieldDispatch("firstName", e.target.value)}
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col xs={12} sm={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Last Name</Form.Label>
-                      <Form.Control
-                        value={fields.lastName}
-                        onChange={(e) => fieldDispatch("lastName", e.target.value)}
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col xs={12} sm={6}>
+                  <Col xs={12}>
                     <Form.Group className="mb-3">
                       <Form.Label>Email Address</Form.Label>
                       <Form.Control value={fields.email} onChange={(e) => fieldDispatch("email", e.target.value)} />
-                    </Form.Group>
-                  </Col>
-                  <Col xs={12} sm={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Phone number (optional)</Form.Label>
-                      <Form.Control value={fields.phone} onChange={(e) => fieldDispatch("phone", e.target.value)} />
                     </Form.Group>
                   </Col>
                 </Row>
@@ -120,7 +97,16 @@ export default function PrinterNew() {
             />
           </Form.Group>
           <div style={{ display: "flex", justifyContent: "center", marginTop: 10, marginBottom: 80 }}>
-            <Button disabled={!fields.tc || !orderSectionVld} onClick={() => setOrderStatus("success")}>
+            <Button
+              disabled={!fields.tc || !orderSectionVld}
+              onClick={async () => {
+                const resp = await sendEmailNotif(fields.email);
+                if (resp !== "ERROR") {
+                  setOrderStatus("success");
+                } else {
+                  setOrderStatus("error");
+                }
+              }}>
               Add new printer
             </Button>
           </div>

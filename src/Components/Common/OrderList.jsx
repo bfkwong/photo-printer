@@ -36,10 +36,18 @@ export default function OrderList(props) {
                   <td>{order.userId}</td>
                   <td>{order.assigned === "employee name" ? "unassigned" : order.assigned}</td>
                   <td>
-                    {!order.status && <NewOrder />}
-                    {order.status === "issue" && <Issues />}
-                    {order.status === "shipped" && <Shipped />}
-                    {order.status === "resolved" && <Resolved />}
+                    {(() => {
+                      switch (order.statues) {
+                        case "resolved":
+                          return <Resolved />;
+                        case "issue":
+                          return <Issues />;
+                        case "shipped":
+                          return <Shipped />;
+                        default:
+                          return <NewOrder />;
+                      }
+                    })()}
                   </td>
                 </tr>
               ))}

@@ -383,7 +383,8 @@ export default function OrderNew() {
                     phone: fields.phone,
                     province: fields.addr_state,
                     imageurl: imagesToUpload.map((img) => `protected/${credentials.identityId}/${img}`),
-                    trackingurl: "shippo.com/quihf21fho11if1oi/order1"
+                    trackingurl: "shippo.com/quihf21fho11if1oi/order1",
+                    identityId: credentials.identityId
                   }
                 });
                 if (resp === "ERROR") {
