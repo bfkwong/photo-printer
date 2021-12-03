@@ -7,7 +7,7 @@ import Auth from "@aws-amplify/auth";
 
 import { stateAbbrev } from "../../constants";
 import { getCogUsername, getUserInfo, SET_ALL_ORDERS } from "../../redux";
-import { getAllOrders, postNewOrder } from "../../Service/queries";
+import { createShippo, getAllOrders, postNewOrder } from "../../Service/queries";
 import { useDispatch } from "react-redux";
 
 export function UploadedImage(props) {
@@ -387,6 +387,31 @@ export default function OrderNew() {
                     identityId: credentials.identityId
                   }
                 });
+
+                await createShippo({
+                  user: {
+                    user_id: cogUsername,
+                    name: `${userInfo.FirstName} ${userInfo.LastName}`,
+                    street1: userInfo.Street,
+                    city: userInfo.City,
+                    state: userInfo.State,
+                    zip: userInfo.Zipcode,
+                    country: "US",
+                    phone: userInfo.Phone,
+                    email: userInfo.Email
+                  },
+                  store_id: "0000",
+                  parcel: {
+                    length: "5",
+                    width: "5",
+                    height: "5",
+                    distance_unit: "in",
+                    weight: "2",
+                    mass_unit: "lb"
+                  },
+                  orderId: resp.body
+                });
+
                 if (resp === "ERROR") {
                   setOrderStatus("error");
                 } else {

@@ -5,8 +5,8 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { Navigate, useNavigate } from "react-router";
 import { stateAbbrev } from "../../constants";
-import { getCompletedFTU, getUserType, SET_COMPLETED_FTU } from "../../redux";
-import { postUserInfo } from "../../Service/queries";
+import { getCompletedFTU, getUserType, SET_COMPLETED_FTU, SET_USER_INFO } from "../../redux";
+import { getUserInfo, postUserInfo } from "../../Service/queries";
 
 export default function FTU(props) {
   const dispatchRdx = useDispatch();
@@ -199,6 +199,9 @@ export default function FTU(props) {
               Phone: fields.phone
             });
             if (create !== "ERROR") {
+              const userInfo = await getUserInfo();
+              dispatch({ type: SET_USER_INFO, payload: userInfo });
+
               dispatchRdx({ type: SET_COMPLETED_FTU, payload: true });
               navigate(`/${userType}`);
             }

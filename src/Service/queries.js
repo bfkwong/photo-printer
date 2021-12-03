@@ -252,3 +252,21 @@ export async function updateOrderStatus(orderId, orderStatus) {
     return "ERROR";
   }
 }
+
+export async function createShippo(payload) {
+  try {
+    const cogUserId = await Auth.currentSession();
+    const reqUrl = new Request(`https://c7q2kkfj62.execute-api.us-west-2.amazonaws.com/dev/tracking/create-shippo`);
+    const response = await fetch(reqUrl, {
+      method: "POST",
+      headers: {
+        Authorization: cogUserId?.idToken?.jwtToken
+      },
+      body: JSON.stringify(payload)
+    });
+    const responseJson = await response.json();
+    return responseJson;
+  } catch (e) {
+    return "ERROR";
+  }
+}
