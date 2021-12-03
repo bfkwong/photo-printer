@@ -233,3 +233,22 @@ export async function sendEmailNotif(email) {
     return "ERROR";
   }
 }
+
+export async function updateOrderStatus(orderId, orderStatus) {
+  try {
+    const cogUserId = await Auth.currentSession();
+    const reqUrl = new Request(
+      `https://qrt54y4ylj.execute-api.us-west-2.amazonaws.com/api/v1/ordermanagement/editorder?orderId=${orderId}&status=${orderStatus}`
+    );
+    const response = await fetch(reqUrl, {
+      method: "PATCH",
+      headers: {
+        Authorization: cogUserId?.idToken?.jwtToken
+      }
+    });
+    const responseJson = await response.json();
+    return responseJson;
+  } catch (e) {
+    return "ERROR";
+  }
+}

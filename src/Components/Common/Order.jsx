@@ -4,7 +4,13 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router";
 import { Storage } from "aws-amplify";
 
-import { assignOrder, deleteOrder, getAllOrdersByStore, getAllOrders as getAllOrdersQry } from "../../Service/queries";
+import {
+  assignOrder,
+  deleteOrder,
+  getAllOrdersByStore,
+  getAllOrders as getAllOrdersQry,
+  updateOrderStatus
+} from "../../Service/queries";
 import { UploadedImage } from "./OrderNew";
 import { useSelector, useDispatch } from "react-redux";
 import { getAllOrders, getAllUsers, getUserType, SET_ALL_ORDERS } from "../../redux";
@@ -81,7 +87,14 @@ export default function Order(props) {
             <Col>
               <Form.Group className="mb-3">
                 <Form.Label>Order status</Form.Label>
-                <Form.Select value={order.statues ?? "issue"}>
+                <Form.Select
+                  value={order.statues ?? "issue"}
+                  onChange={async (e) => {
+                    await updateOrderStatus(order.orderId, e.target.value);
+
+                    const allOrdersResp = await getAllOrdersByStore("0000");
+                    dispatchRdx({ type: SET_ALL_ORDERS, payload: allOrdersResp !== "ERROR" ? allOrdersResp : [] });
+                  }}>
                   <option value="new_order">New Order 📥</option>
                   <option value="issue">Issue 🚨</option>
                   <option value="shipped">Shipped 🚀</option>
