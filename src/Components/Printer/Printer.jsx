@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Col, Row } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import { useNavigate, Routes, Route, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
@@ -11,34 +11,6 @@ import Order from "../Common/Order";
 import OrderNew from "../Common/OrderNew";
 import { useDispatch } from "react-redux";
 import { getAllOrdersByStore } from "../../Service/queries";
-
-function PrinterHome() {
-  return (
-    <div>
-      <h3>Ciao Bryan 👋 here's a status update</h3>
-      <Container style={{ marginTop: 35 }}>
-        <Row>
-          <Col style={{ textAlign: "center", marginTop: 10 }} xs={6} sm={3}>
-            <h2>8 📥</h2>
-            <h6>New Orders Today</h6>
-          </Col>
-          <Col style={{ textAlign: "center", marginTop: 10 }} xs={6} sm={3}>
-            <h2>2 ⛔️</h2>
-            <h6>Blocked Order</h6>
-          </Col>
-          <Col style={{ textAlign: "center", marginTop: 10 }} xs={6} sm={3}>
-            <h2>26 🚛</h2>
-            <h6>Orders in Transit</h6>
-          </Col>
-          <Col style={{ textAlign: "center", marginTop: 10 }} xs={6} sm={3}>
-            <h2>328 🎉</h2>
-            <h6>Completed Orders</h6>
-          </Col>
-        </Row>
-      </Container>
-    </div>
-  );
-}
 
 export default function Printer(props) {
   const navigate = useNavigate();
@@ -80,8 +52,19 @@ export default function Printer(props) {
             <Route path=":orderId" element={<Order />} />
             <Route path="new" element={<OrderNew />} />
           </Route>
-          <Route path="*" element={<PrinterHome />}></Route>
+          <Route path="*" element={<Navigate to="/printer/orders" />}></Route>
         </Routes>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            width: "100%",
+            color: "#696969",
+            marginTop: 50,
+            marginBottom: 30
+          }}>
+          <p>© PhotoPrinter 2021</p>
+        </div>
       </Container>
     </div>
   );

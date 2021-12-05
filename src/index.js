@@ -9,16 +9,19 @@ import store from "./redux";
 import App from "./App";
 
 import "bootstrap/dist/css/bootstrap.min.css";
+import ErrorBoundary from "./Components/Common/ErrorBoundary";
 
 Amplify.configure(awsExports);
 
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </Provider>
+    <ErrorBoundary>
+      <Provider store={store}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </Provider>
+    </ErrorBoundary>
   </React.StrictMode>,
   document.getElementById("root")
 );
