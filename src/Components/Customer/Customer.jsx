@@ -13,29 +13,34 @@ import Gallery from "../Common/Gallery";
 import { useDispatch } from "react-redux";
 import { getAllOrders as getAllOrdersQry } from "../../Service/queries";
 
-function CustomerHome() {
+function CustomerHome(props) {
   return (
     <div>
       <h3>Ciao Bryan 👋 here's a status update</h3>
       <Container style={{ marginTop: 35 }}>
-        <Row>
+        <Row style={{ marginBottom: 30 }}>
           <Col style={{ textAlign: "center", marginTop: 10 }} xs={6} sm={3}>
-            <h2>8 📥</h2>
+            <h2>
+              {props?.allOrders?.filter &&
+                props.allOrders.filter((ord) => !["issue", "shipped", "resolved"].includes(ord.statues)).length}{" "}
+              📥
+            </h2>
             <h6>New Orders Today</h6>
           </Col>
           <Col style={{ textAlign: "center", marginTop: 10 }} xs={6} sm={3}>
-            <h2>2 ⛔️</h2>
+            <h2>{props?.allOrders?.filter && props.allOrders.filter((ord) => ord.statues === "issue").length} ⛔️</h2>
             <h6>Blocked Order</h6>
           </Col>
           <Col style={{ textAlign: "center", marginTop: 10 }} xs={6} sm={3}>
-            <h2>26 🚛</h2>
+            <h2>{props?.allOrders?.filter && props.allOrders.filter((ord) => ord.statues === "shipped").length} 🚛</h2>
             <h6>Orders in Transit</h6>
           </Col>
           <Col style={{ textAlign: "center", marginTop: 10 }} xs={6} sm={3}>
-            <h2>328 🎉</h2>
-            <h6>Completed Orders</h6>
+            <h2>{props?.allOrders?.filter && props.allOrders.filter((ord) => ord.statues === "resolved").length} 🎉</h2>
+            <h6>Orders Resolved</h6>
           </Col>
         </Row>
+        <Gallery />
       </Container>
     </div>
   );
@@ -73,7 +78,7 @@ export default function Customer(props) {
       />
       <Container fluid="sm" style={{ marginTop: 10 }}>
         <Routes>
-          <Route path="/" element={<CustomerHome />} />
+          <Route path="/" element={<CustomerHome allOrders={orders} />} />
           <Route path="orders">
             <Route index element={<OrderList orders={orders} />} />
             <Route path=":orderId" element={<Order />} />
@@ -83,6 +88,17 @@ export default function Customer(props) {
             <Route index element={<Gallery />} />
           </Route>
         </Routes>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            width: "100%",
+            color: "#696969",
+            marginTop: 50,
+            marginBottom: 30
+          }}>
+          <p>© PhotoPrinter 2021</p>
+        </div>
       </Container>
     </div>
   );

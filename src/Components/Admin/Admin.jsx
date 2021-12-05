@@ -9,7 +9,7 @@ import Order from "../Common/Order";
 import OrderNew from "../Common/OrderNew";
 import CustomerList from "../Common/CustomerList";
 import PrinterList from "../Common/PrinterList";
-import { getUserType, SET_ALL_ORDERS, SET_ALL_USERS } from "../../redux";
+import { getAllOrders, getUserType, SET_ALL_ORDERS, SET_ALL_USERS } from "../../redux";
 import { userTypes } from "../../constants";
 import CustomerNew from "../Common/CustomerNew";
 import PrinterNew from "../Common/PrinterNew";
@@ -17,30 +17,35 @@ import { getAllOrdersByStore, getAllUsers, updateUserType } from "../../Service/
 import { getAllUsers as getAllUsersRdx } from "../../redux";
 import Customer from "../Common/Customer";
 import Printer from "../Common/Printer";
-import { Plus } from "react-bootstrap-icons";
-import { CustomerBdg, PrinterBdg } from "../Common/Badges";
+import { CustomerBdg, Issues, NewOrder, PrinterBdg, Resolved, Shipped } from "../Common/Badges";
 
 function AdminHome(props) {
+  const navigate = useNavigate();
+
   return (
     <div>
       <h3>Ciao Bryan 👋 here's a status update</h3>
       <Container style={{ marginTop: 35 }}>
         <Row>
           <Col style={{ textAlign: "center", marginTop: 10 }} xs={6} sm={3}>
-            <h2>36 📥</h2>
+            <h2>
+              {props?.allOrders?.filter &&
+                props.allOrders.filter((ord) => !["issue", "shipped", "resolved"].includes(ord.statues)).length}{" "}
+              📥
+            </h2>
             <h6>New Orders Today</h6>
           </Col>
           <Col style={{ textAlign: "center", marginTop: 10 }} xs={6} sm={3}>
-            <h2>7 ⛔️</h2>
+            <h2>{props?.allOrders?.filter && props.allOrders.filter((ord) => ord.statues === "issue").length} ⛔️</h2>
             <h6>Blocked Order</h6>
           </Col>
           <Col style={{ textAlign: "center", marginTop: 10 }} xs={6} sm={3}>
-            <h2>182 🚛</h2>
+            <h2>{props?.allOrders?.filter && props.allOrders.filter((ord) => ord.statues === "shipped").length} 🚛</h2>
             <h6>Orders in Transit</h6>
           </Col>
           <Col style={{ textAlign: "center", marginTop: 10 }} xs={6} sm={3}>
-            <h2>$43.2k 💰</h2>
-            <h6>Total Revenue</h6>
+            <h2>{props?.allOrders?.filter && props.allOrders.filter((ord) => ord.statues === "resolved").length} 🎉</h2>
+            <h6>Orders Resolved</h6>
           </Col>
         </Row>
       </Container>
@@ -75,16 +80,44 @@ function AdminHome(props) {
                 </td>
               </tr>
             ))}
+        </tbody>
+      </Table>
+      <i style={{ color: "#a0a0a0" }}>To invite an admin, invite a regular customer and give them admin status</i>
+      <h3 style={{ marginTop: 35 }}>Unassigned orders</h3>
+      <Table hover style={{ marginTop: 20 }}>
+        <thead>
           <tr>
-            <td colSpan="5" style={{ textAlign: "center" }} onClick={() => props.navigate(`/admin/admins/new`)}>
-              <b>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <Plus size={30} />
-                  <div>Invite a new admin</div>
-                </div>
-              </b>
-            </td>
+            <th>Title</th>
+            <th>Customer</th>
+            <th>Printer</th>
+            <th>Status</th>
           </tr>
+        </thead>
+        <tbody>
+          {props?.allOrders?.map &&
+            props.allOrders
+              .filter((ord) => ord.assigned === "employee name")
+              .map((order) => (
+                <tr onClick={() => navigate(`/admin/orders/${order.orderId}`)}>
+                  <td>{order.orderTitle}</td>
+                  <td>{order.userId}</td>
+                  <td>{order.assigned === "employee name" ? "unassigned" : order.assigned}</td>
+                  <td>
+                    {(() => {
+                      switch (order.statues) {
+                        case "resolved":
+                          return <Resolved />;
+                        case "issue":
+                          return <Issues />;
+                        case "shipped":
+                          return <Shipped />;
+                        default:
+                          return <NewOrder />;
+                      }
+                    })()}
+                  </td>
+                </tr>
+              ))}
         </tbody>
       </Table>
     </div>
@@ -95,6 +128,7 @@ export default function Admin(props) {
   const navigate = useNavigate();
   const userType = useSelector(getUserType);
   const allUsers = useSelector(getAllUsersRdx);
+  const allOrders = useSelector(getAllOrders);
   const dispatch = useDispatch();
 
   const getAllUser = useCallback(async () => {
@@ -140,7 +174,11 @@ export default function Admin(props) {
           <Route path="customers">
             <Route
               index
-              element={<CustomerList customers={allUsers.filter((user) => user.AccessLevel === userTypes.CUSTOMER)} />}
+              element={
+                <CustomerList
+                  customers={allUsers?.filter && allUsers.filter((user) => user.AccessLevel === userTypes.CUSTOMER)}
+                />
+              }
             />
             <Route path=":customerId" element={<Customer />} />
             <Route path="new" element={<CustomerNew />} />
@@ -148,7 +186,11 @@ export default function Admin(props) {
           <Route path="printers">
             <Route
               index
-              element={<PrinterList printers={allUsers.filter((user) => user.AccessLevel === userTypes.PRINTER)} />}
+              element={
+                <PrinterList
+                  printers={allUsers?.filter && allUsers.filter((user) => user.AccessLevel === userTypes.PRINTER)}
+                />
+              }
             />
             <Route path=":printerId" element={<Printer />} />
             <Route path="new" element={<PrinterNew />} />
@@ -160,10 +202,22 @@ export default function Admin(props) {
                 navigate={navigate}
                 admins={allUsers.filter((user) => user.AccessLevel.toLowerCase() === "admin")}
                 getAllUser={getAllUser}
+                allOrders={allOrders}
               />
             }
           />
         </Routes>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            width: "100%",
+            color: "#696969",
+            marginTop: 50,
+            marginBottom: 30
+          }}>
+          <p>© PhotoPrinter 2021</p>
+        </div>
       </Container>
     </div>
   );

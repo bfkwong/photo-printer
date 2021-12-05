@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 
 import { getUserType } from "../../redux";
-import { GoodStanding, Probation, Banned } from "./Badges";
 
 export default function PrinterList(props) {
   const userType = useSelector(getUserType);
@@ -19,7 +18,7 @@ export default function PrinterList(props) {
           <tr>
             <th>Name</th>
             <th>Email</th>
-            <th>Status</th>
+            <th>Phone</th>
           </tr>
         </thead>
         <tbody>
@@ -28,9 +27,7 @@ export default function PrinterList(props) {
               <tr onClick={() => navigate(`/${userType}/printers/${printer.UserID}`)}>
                 <td>{`${printer.FirstName} ${printer.LastName}`}</td>
                 <td>{printer.Email}</td>
-                <td>
-                  <GoodStanding />
-                </td>
+                <td>{printer.Phone}</td>
               </tr>
             ))}
           <tr>

@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 
 import { getUserType } from "../../redux";
-import { GoodStanding, Probation, Banned } from "./Badges";
 
 export default function CustomerList(props) {
   const userType = useSelector(getUserType);
@@ -19,7 +18,7 @@ export default function CustomerList(props) {
           <tr>
             <th>Name</th>
             <th>Email</th>
-            <th>Status</th>
+            <th>Phone</th>
           </tr>
         </thead>
         <tbody>
@@ -28,9 +27,7 @@ export default function CustomerList(props) {
               <tr onClick={() => navigate(`/${userType}/customers/${customer.UserID}`)}>
                 <td>{`${customer.FirstName} ${customer.LastName}`}</td>
                 <td>{customer.Email}</td>
-                <td>
-                  <GoodStanding />
-                </td>
+                <td>{customer.Phone}</td>
               </tr>
             ))}
           <tr>
